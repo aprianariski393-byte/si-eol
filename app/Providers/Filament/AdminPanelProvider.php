@@ -45,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login(Login::class)
             ->profile(EditProfile::class)
-            ->brandLogo('/images/logo/laravelchezzy.png')
+            // ->brandLogo('/images/logo/laravelchezzy.png')
             ->brandLogoHeight('2.5rem')
             ->defaultThemeMode(ThemeMode::System)
             ->colors([
@@ -75,14 +75,14 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 EasyFooterPlugin::make()
                     ->withBorder()
-                    ->withSentence('LaravelChezzy. All rights reserved.'),
+                    ->withSentence('End Of Life KMI. All rights reserved.'),
             ])
             // AUTH PLUGINS
             ->plugin(
                 AuthDesignerPlugin::make()
                     ->defaults(
                         fn($config) => $config
-                            ->media(asset('images/auth/background-auth.png'))
+                            ->media(asset('images/auth/background-auth.jpg'))
                             ->mediaPosition(MediaPosition::Left)
                             ->blur(0)
                             ->mediasize('70%')
