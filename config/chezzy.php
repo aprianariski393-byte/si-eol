@@ -16,6 +16,6 @@ return [
     |--------------------------------------------------------------------------
     | default | neobrutalism | brisk | Nord | Awin
     */
-    'active_theme' => 'default',
+    'active_theme' => 'neobrutalism',
 
 ];

@@ -45,14 +45,14 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login(Login::class)
             ->profile(EditProfile::class)
-            // ->brandLogo('/images/logo/laravelchezzy.png')
-            ->brandLogoHeight('2.5rem')
+            ->brandLogo('/images/logo/logo_kmi.png')
+            ->brandLogoHeight('4rem')
             ->defaultThemeMode(ThemeMode::System)
             ->colors([
                 'danger' => Color::Rose,
                 'gray' => Color::Gray,
-                'info' => Color::Blue,
-                'primary' => Color::Indigo,
+                'info' => Color::Cyan,
+                'primary' => Color::Blue,
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
             ])
