@@ -9,9 +9,10 @@ use Flowframe\Trend\TrendValue;
 
 class AssetPurchaseTrendChart extends ChartWidget
 {
-    protected ?string $heading = 'Asset Purchases This Year';
+    protected ?string $heading = 'Aset Yang Dibeli Tahun Ini';
     protected static ?int $sort = 3;
     protected string $color = 'info';
+    protected int|string|array $columnSpan = 'full';
     public function getDescription(): ?string
     {
         return 'Jumlah aset yang dibeli setiap bulan dalam tahun berjalan.';

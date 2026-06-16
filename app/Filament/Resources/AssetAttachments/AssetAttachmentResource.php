@@ -33,6 +33,12 @@ class AssetAttachmentResource extends Resource
     // Opsional: Masukkan ke dalam grup navigasi agar sidebar rapi
     protected static string|UnitEnum|null $navigationGroup = 'Asset Management';
 
+    protected static ?string $navigationLabel = 'Lampiran Aset';
+
+    // Nama jamak dan tunggal untuk breadcrumb dan judul halaman
+    protected static ?string $pluralModelLabel = 'Lampiran Aset';
+    protected static ?string $modelLabel = 'Lampiran Aset';
+
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema

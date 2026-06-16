@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class AssetsByCategoryChart extends ChartWidget
 {
-    protected ?string $heading = 'Assets by Category';
+    protected ?string $heading = 'Aset berdasarkan Kategori';
     protected static ?int $sort = 2;
 
     protected function getData(): array
