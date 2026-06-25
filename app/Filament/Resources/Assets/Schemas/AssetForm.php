@@ -10,8 +10,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section; // <-- Sesuai SOP Filament 4
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Carbon;
 
 class AssetForm
 {
@@ -149,7 +151,13 @@ class AssetForm
                             ->helperText('Tanggal faktur atau nota pembelian aset.')
                             ->native(false)
                             ->displayFormat('d M Y')
-                            ->prefixIcon('heroicon-o-shopping-cart'),
+                            ->prefixIcon('heroicon-o-shopping-cart')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                                if ($state && $get('useful_life_years')) {
+                                    $set('eol_date', Carbon::parse($state)->addYears((int)$get('useful_life_years'))->toDateString());
+                                }
+                            }),
 
                         TextInput::make('purchase_cost')
                             ->label('Harga Beli')
@@ -164,7 +172,13 @@ class AssetForm
                             ->placeholder('Contoh: 5')
                             ->helperText('Perkiraan umur alat sebelum nilainya habis (depresiasi).')
                             ->numeric()
-                            ->suffix('Tahun'),
+                            ->suffix('Tahun')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                                if ($state && $get('purchase_date')) {
+                                    $set('eol_date', Carbon::parse($get('purchase_date'))->addYears((int)$state)->toDateString());
+                                }
+                            }),
 
                         DatePicker::make('eol_date')
                             ->label('Tanggal EOL (End of Life)')

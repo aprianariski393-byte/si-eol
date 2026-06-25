@@ -13,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class AssetsTable
 {
@@ -69,7 +70,7 @@ class AssetsTable
                     ->badge()
                     ->color(
                         fn($state) =>
-                        // Jika EOL lewat atau kurang dari 3 bulan, jadikan merah
+                            // Jika EOL lewat atau kurang dari 3 bulan, jadikan merah
                         ($state && \Carbon\Carbon::parse($state) <= now()->addMonths(3)) ? 'danger' : 'success'
                     ),
 
@@ -152,8 +153,66 @@ class AssetsTable
 
                 TernaryFilter::make('is_critical')
                     ->label('Hanya Aset Kritis'),
+
+                \Filament\Tables\Filters\Filter::make('eol_status')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('status')
+                            ->options([
+                                'aman' => 'Aman (> 3 Bulan)',
+                                'warning' => 'Mendekati EOL (≤ 3 Bulan)',
+                                'kritis' => 'Kritis / Sudah EOL',
+                            ])
+                            ->label('Status EOL')
+                    ])
+                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data): \Illuminate\Database\Eloquent\Builder {
+                        return $query->when(
+                            $data['status'],
+                            function (\Illuminate\Database\Eloquent\Builder $query, $status) {
+                                $now = now();
+                                $warningDate = now()->addMonths(3);
+                                if ($status === 'aman') {
+                                    return $query->where(function ($q) use ($warningDate) {
+                                        $q->whereDate('eol_date', '>', $warningDate)
+                                            ->orWhereNull('eol_date');
+                                    });
+                                } elseif ($status === 'warning') {
+                                    return $query->whereDate('eol_date', '>=', $now)
+                                        ->whereDate('eol_date', '<=', $warningDate);
+                                } elseif ($status === 'kritis') {
+                                    return $query->whereDate('eol_date', '<', $now);
+                                }
+                                return $query;
+                            }
+                        );
+                    }),
             ])
             ->recordActions([
+                Action::make('dispose')
+                    ->label('Pensiunkan (EOL)')
+                    ->icon('heroicon-o-archive-box-x-mark')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Pensiunkan Aset EOL')
+                    ->modalDescription('Apakah Anda yakin ingin mengubah status aset ini menjadi End of Life (Pensiun)?')
+                    ->action(function ($record) {
+                        $statusEol = \App\Models\Status::where('name', 'like', '%End of Life%')->first();
+                        if ($statusEol) {
+                            $oldStatusId = $record->status_id;
+                            $record->update(['status_id' => $statusEol->id]);
+
+                            if (class_exists(\App\Models\AssetHistory::class)) {
+                                \App\Models\AssetHistory::create([
+                                    'asset_id' => $record->id,
+                                    'user_id' => Auth::id() ?? 1,
+                                    'action' => 'Pensiunkan Aset (Sistem)',
+                                    'old_value' => ['status_id' => $oldStatusId],
+                                    'new_value' => ['status_id' => $statusEol->id],
+                                ]);
+                            }
+                        }
+                    })
+                    ->visible(fn($record) => $record->eol_date && \Carbon\Carbon::parse($record->eol_date) <= now()->addMonths(3)),
+
                 Action::make('cetak_detail')
                     ->label('Cetak Detail')
                     ->icon('heroicon-o-printer')
