@@ -72,6 +72,7 @@ class AssetAttachmentResource extends Resource
                         FileUpload::make('file_path')
                             ->label('Unggah Berkas')
                             ->directory('asset-attachments')
+                            ->disk('public')
                             ->preserveFilenames()
                             ->openable()
                             ->downloadable()
