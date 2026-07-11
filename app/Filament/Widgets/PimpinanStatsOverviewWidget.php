@@ -20,29 +20,29 @@ class PimpinanStatsOverviewWidget extends StatsOverviewWidget
     protected function getStats(): array
     {
         $totalAssets = Asset::count();
-        $totalAssetValue = Asset::sum('purchase_cost');
+        $activeAssets = Asset::where('status', 'Active')->count();
         $totalMaintenanceCost = MaintenanceLog::sum('cost');
-        $criticalAssets = Asset::where('is_critical', true)->count();
+        $maintenanceAssets = Asset::where('status', 'Maintenance')->count();
 
         return [
-            Stat::make('Total Assets', $totalAssets)
+            Stat::make('Total Aset', $totalAssets)
                 ->description('Semua aset terdaftar')
                 ->descriptionIcon('heroicon-m-cube')
                 ->color('primary'),
 
-            Stat::make('Total Asset Value', 'Rp ' . number_format($totalAssetValue, 2, ',', '.'))
-                ->description('Total investasi aset')
-                ->descriptionIcon('heroicon-m-banknotes')
+            Stat::make('Aset Aktif', $activeAssets)
+                ->description('Aset yang sedang digunakan')
+                ->descriptionIcon('heroicon-m-check-badge')
                 ->color('success'),
 
-            Stat::make('Maintenance Cost', 'Rp ' . number_format($totalMaintenanceCost, 2, ',', '.'))
+            Stat::make('Total Biaya Perawatan', 'Rp ' . number_format($totalMaintenanceCost, 2, ',', '.'))
                 ->description('Total pengeluaran perawatan')
-                ->descriptionIcon('heroicon-m-wrench-screwdriver')
+                ->descriptionIcon('heroicon-m-banknotes')
                 ->color('warning'),
 
-            Stat::make('Critical Assets', $criticalAssets)
-                ->description('Aset prioritas tinggi')
-                ->descriptionIcon('heroicon-m-exclamation-triangle')
+            Stat::make('Dalam Perbaikan', $maintenanceAssets)
+                ->description('Aset sedang dalam perbaikan')
+                ->descriptionIcon('heroicon-m-wrench')
                 ->color('danger'),
         ];
     }

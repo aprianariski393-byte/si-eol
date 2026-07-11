@@ -3,8 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
-use App\Models\Department;
-use App\Models\Location;
+use App\Models\Asset;
 use Spatie\Permission\Models\Role;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -32,14 +31,14 @@ class AdminStatsOverviewWidget extends StatsOverviewWidget
                 ->descriptionIcon('heroicon-m-shield-check')
                 ->color('info'),
 
-            Stat::make('Total Departments', Department::count())
+            Stat::make('Total Departments', Asset::whereNotNull('department')->distinct('department')->count('department'))
                 ->description('Total departemen')
                 ->descriptionIcon('heroicon-m-building-office')
                 ->color('success'),
 
-            Stat::make('Total Locations', Location::count())
-                ->description('Total lokasi fisik')
-                ->descriptionIcon('heroicon-m-map-pin')
+            Stat::make('Total Assets', Asset::count())
+                ->description('Total aset terdaftar')
+                ->descriptionIcon('heroicon-m-cube')
                 ->color('warning'),
         ];
     }

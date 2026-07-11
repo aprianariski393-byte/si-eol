@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Status;
+use App\Models\Asset;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,13 +18,16 @@ class PimpinanAssetStatusChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $statuses = Status::withCount('assets')->get();
+        $statuses = Asset::select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->whereNotNull('status')
+            ->groupBy('status')
+            ->get();
 
         return [
             'datasets' => [
                 [
                     'label' => 'Total Assets',
-                    'data' => $statuses->pluck('assets_count')->toArray(),
+                    'data' => $statuses->pluck('total')->toArray(),
                     'backgroundColor' => [
                         '#10b981', // green
                         '#f59e0b', // amber
@@ -35,7 +38,7 @@ class PimpinanAssetStatusChartWidget extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $statuses->pluck('name')->toArray(),
+            'labels' => $statuses->pluck('status')->toArray(),
         ];
     }
 

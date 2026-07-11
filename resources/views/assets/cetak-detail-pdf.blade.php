@@ -121,90 +121,56 @@
         </tr>
     </table>
 
-    <div class="section-title">A. Identitas Dasar & Spesifikasi Perangkat</div>
+    <div class="section-title">A. Profil dan Spesifikasi Aset</div>
     <table class="table-profile">
         <tr>
             <td class="label">Kode Inventaris Aset</td>
             <td><strong>{{ $asset->asset_code }}</strong></td>
         </tr>
         <tr>
-            <td class="label">Nama Perangkat / Modul</td>
-            <td>{{ $asset->name }} @if($asset->is_critical) <span class="badge-critical">CRITICAL ASSET</span> @endif</td>
+            <td class="label">Nama Perangkat</td>
+            <td>{{ $asset->name }}</td>
         </tr>
         <tr>
-            <td class="label">Kategori / Tipe</td>
-            <td>{{ $asset->category->name ?? '-' }} ({{ $asset->asset_type }})</td>
+            <td class="label">Kategori</td>
+            <td>{{ $asset->category ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Merek & Nomor Model</td>
-            <td>{{ $asset->brand ?? '-' }} / {{ $asset->model_number ?? '-' }}</td>
+            <td class="label">Merek & Tipe</td>
+            <td>{{ $asset->brand ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Nomor Seri / Product Key</td>
+            <td class="label">Nomor Seri / Lisensi</td>
             <td><code>{{ $asset->serial_number ?? '-' }}</code></td>
-        </tr>
-        <tr>
-            <td class="label">Perusahaan Penyedia (Vendor)</td>
-            <td>{{ $asset->vendor->name ?? '-' }}</td>
         </tr>
     </table>
 
-    <div class="section-title">B. Informasi Penempatan & Estimasi Umur Teknis</div>
+    <div class="section-title">B. Penempatan & Siklus Hidup (EOL)</div>
     <table class="table-profile">
         <tr>
             <td class="label">Departemen Pengguna</td>
-            <td>{{ $asset->department->name ?? '-' }}</td>
+            <td>{{ $asset->department ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Lokasi Penempatan Fisik</td>
-            <td>{{ $asset->location->name ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Tanggal Pembelian Resmi</td>
+            <td class="label">Tanggal Pembelian</td>
             <td>{{ $asset->purchase_date ? $asset->purchase_date->translatedFormat('d F Y') : '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Nilai Perolehan / Harga Beli</td>
-            <td>Rp {{ number_format($asset->purchase_cost, 2, ',', '.') }}</td>
-        </tr>
-        <tr>
-            <td class="label">Estimasi Umur Ekonomis</td>
-            <td>{{ $asset->useful_life_years ?? '0' }} Tahun</td>
         </tr>
         <tr>
             <td class="label">Jadwal Tanggal End of Life (EOL)</td>
             <td style="{{ $asset->eol_date && $asset->eol_date->isPast() ? 'color: red; font-weight: bold;' : 'color: green;' }}">
                 {{ $asset->eol_date ? $asset->eol_date->translatedFormat('d F Y') : '-' }}
-                @if($asset->eol_date && $asset->eol_date->isPast()) (Sudah Melewati Batas Batas Pakai) @endif
+                @if($asset->eol_date && $asset->eol_date->isPast()) (Sudah Melewati Batas Waktu) @endif
             </td>
         </tr>
         <tr>
-            <td class="label">Status Kondisi Saat Ini</td>
-            <td><strong>{{ $asset->status->name ?? '-' }}</strong></td>
+            <td class="label">Status Saat Ini</td>
+            <td><strong>{{ $asset->status ?? '-' }}</strong></td>
+        </tr>
+        <tr>
+            <td class="label">Catatan Tambahan</td>
+            <td>{{ $asset->description ?? '-' }}</td>
         </tr>
     </table>
-
-    @if($asset->asset_type === 'Software' && $asset->softwareLicenseDetail)
-    <div class="section-title">C. Spesifikasi Lisensi Perangkat Lunak (SaaS)</div>
-    <table class="table-profile">
-        <tr>
-            <td class="label">Tipe Kontrak Lisensi</td>
-            <td>{{ $asset->softwareLicenseDetail->license_type ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Jumlah Seat / Pengguna Berizin</td>
-            <td>{{ $asset->softwareLicenseDetail->seats_count ?? '0' }} User / Hak Akses</td>
-        </tr>
-        <tr>
-            <td class="label">Tanggal Aktivasi Pertama</td>
-            <td>{{ $asset->softwareLicenseDetail->activated_at ? $asset->softwareLicenseDetail->activated_at->translatedFormat('d F Y') : '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Batas Akhir Langganan</td>
-            <td>{{ $asset->subscription_expiry ? $asset->subscription_expiry->translatedFormat('d F Y') : 'Tanpa Batasan Masa (Perpetual)' }}</td>
-        </tr>
-    </table>
-    @endif
 
     <div class="section-title">D. Log Pemeliharaan & Perbaikan Berkala (*Maintenance*)</div>
     @if($asset->maintenanceLogs && $asset->maintenanceLogs->count() > 0)

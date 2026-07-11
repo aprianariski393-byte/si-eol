@@ -11,8 +11,8 @@ class AssetController extends Controller
     // PERBAIKAN: Tambahkan Request $request di dalam kurung fungsi
     public function cetakPdf(Request $request)
     {
-        // Mulai query dasar dengan eager loading relasi
-        $query = Asset::with(['category', 'status', 'location', 'department']);
+        // Mulai query dasar dengan eager loading relasi (hanya maintenanceLogs yang tersisa)
+        $query = Asset::query();
 
         // Jika dipanggil dari Bulk Action Filament (membawa data baris yang dicentang)
         if ($request->has('ids')) {
@@ -33,7 +33,7 @@ class AssetController extends Controller
     // 2. Fungsi Cetak Detail Satu Aset
     public function cetakDetailPdf($id)
     {
-        $asset = Asset::with(['category', 'vendor', 'status', 'location', 'department', 'maintenanceLogs', 'softwareLicenseDetail'])->findOrFail($id);
+        $asset = Asset::with(['maintenanceLogs'])->findOrFail($id);
 
         $pdf = Pdf::loadView('assets.cetak-detail-pdf', compact('asset'))
             ->setPaper('a4', 'portrait');

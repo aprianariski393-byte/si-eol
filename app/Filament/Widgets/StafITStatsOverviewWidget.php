@@ -34,27 +34,27 @@ class StafITStatsOverviewWidget extends StatsOverviewWidget
             ->whereDate('eol_date', '<=', $now)
             ->count();
 
-        // Aset Kritikal untuk Staf IT lebih relevan untuk dijaga
-        $criticalAssets = Asset::where('is_critical', true)->count();
+        // Aset yang sedang dalam perbaikan (Maintenance)
+        $maintenanceAssets = Asset::where('status', 'Maintenance')->count();
 
         return [
-            Stat::make('Total Assets', $totalAssets)
+            Stat::make('Total Aset', $totalAssets)
                 ->description('Semua aset')
                 ->descriptionIcon('heroicon-m-cube')
                 ->color('primary'),
 
-            Stat::make('Critical Assets', $criticalAssets)
-                ->description('Aset yang butuh perhatian')
-                ->descriptionIcon('heroicon-m-exclamation-triangle')
+            Stat::make('Dalam Perbaikan', $maintenanceAssets)
+                ->description('Aset sedang maintenance')
+                ->descriptionIcon('heroicon-m-wrench')
                 ->color('warning'),
 
-            Stat::make('Total Maintenance Logs', $totalMaintenanceLogs)
+            Stat::make('Total Log Pemeliharaan', $totalMaintenanceLogs)
                 ->description('Riwayat pemeliharaan')
                 ->descriptionIcon('heroicon-m-wrench-screwdriver')
                 ->color('info'),
 
-            Stat::make('Expired/EOL Assets', $expiredAssets)
-                ->description('Aset kedaluwarsa')
+            Stat::make('Aset Pensiun (EOL)', $expiredAssets)
+                ->description('Aset melewati batas pakai')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger'),
         ];

@@ -52,6 +52,9 @@ class MaintenanceLogResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->native(false)
+                            ->prefixIcon('heroicon-m-cube')
+                            ->placeholder('Pilih Aset...')
                             ->columnSpanFull(),
 
                         DatePicker::make('maintenance_date')
@@ -59,17 +62,20 @@ class MaintenanceLogResource extends Resource
                             ->native(false)
                             ->displayFormat('d M Y')
                             ->required()
+                            ->prefixIcon('heroicon-m-calendar')
                             ->default(now()), // Default ke hari ini
 
                         TextInput::make('maintenance_type')
                             ->label('Jenis Pemeliharaan')
                             ->placeholder('Contoh: Patching / Upgrade RAM / Ganti Oli')
                             ->maxLength(100)
+                            ->prefixIcon('heroicon-m-wrench')
                             ->required(),
 
                         TextInput::make('performed_by')
                             ->label('Dilakukan Oleh (Teknisi/Vendor)')
                             ->placeholder('Nama internal atau pihak ketiga')
+                            ->prefixIcon('heroicon-m-user-circle')
                             ->maxLength(255),
                     ])
                     ->columns(3)
@@ -83,12 +89,16 @@ class MaintenanceLogResource extends Resource
                             ->label('Biaya Pemeliharaan')
                             ->numeric()
                             ->prefix('Rp')
+                            ->prefixIcon('heroicon-m-banknotes')
+                            ->placeholder('0')
                             ->maxValue(999999999999.99),
 
                         DatePicker::make('next_maintenance_date')
                             ->label('Jadwal Pemeliharaan Berikutnya')
                             ->native(false)
                             ->displayFormat('d M Y')
+                            ->prefixIcon('heroicon-m-calendar-days')
+                            ->placeholder('Pilih Tanggal...')
                             ->helperText('Kosongkan jika tidak ada jadwal rutin.'),
 
                         Textarea::make('description')
@@ -116,12 +126,14 @@ class MaintenanceLogResource extends Resource
 
                         TextEntry::make('maintenance_date')
                             ->label('Tanggal Pelaksanaan')
-                            ->date('d F Y'),
+                            ->date('d F Y')
+                            ->placeholder('-'),
 
                         TextEntry::make('maintenance_type')
                             ->label('Jenis Pemeliharaan')
                             ->badge()
-                            ->color('info'),
+                            ->color('info')
+                            ->placeholder('-'),
 
                         TextEntry::make('performed_by')
                             ->label('Teknisi')

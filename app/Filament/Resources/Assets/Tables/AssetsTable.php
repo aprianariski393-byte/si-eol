@@ -21,48 +21,44 @@ class AssetsTable
     {
         return $table
             ->columns([
-                // 1. Menggabungkan Nama dan Kode Aset agar hemat kolom
                 TextColumn::make('name')
                     ->label('Identitas Aset')
-                    ->searchable(['name', 'asset_code']) // Bisa dicari lewat nama atau kode
+                    ->searchable(['name', 'asset_code'])
                     ->weight('bold')
                     ->color('primary')
                     ->description(fn($record) => 'Kode: ' . $record->asset_code)
                     ->wrap(),
 
-                // 2. Menggabungkan Tipe dan Kategori
-                TextColumn::make('asset_type')
-                    ->label('Tipe & Kategori')
+                TextColumn::make('category')
+                    ->label('Kategori')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'Software' => 'info',
-                        'Hardware' => 'gray',
-                        default => 'gray',
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'IT Equipment' => 'Peralatan IT',
+                        'Software' => 'Perangkat Lunak',
+                        'Furniture' => 'Mebel',
+                        'Vehicles' => 'Kendaraan',
+                        'Machinery' => 'Mesin',
+                        default => $state,
                     })
-                    ->description(fn($record) => $record->category?->name)
                     ->searchable(),
 
-                // 3. Status dan Kritis di satu pandangan
-                TextColumn::make('status.name')
+                TextColumn::make('status')
                     ->label('Status')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'Active' => 'Aktif',
+                        'Maintenance' => 'Dalam Perbaikan',
+                        'End of Life' => 'Pensiun (EOL)',
+                        'Disposed' => 'Dihapus',
+                        'Lost' => 'Hilang',
+                        default => $state,
+                    })
                     ->searchable(),
 
-                IconColumn::make('is_critical')
-                    ->label('Kritis')
-                    ->boolean()
-                    ->trueIcon(Heroicon::ExclamationTriangle)
-                    ->trueColor('danger')
-                    ->falseIcon('') // Sembunyikan ikon jika tidak kritis agar tabel bersih
-                    ->tooltip('Aset ini sangat penting untuk operasional.'),
+                TextColumn::make('department')
+                    ->label('Departemen Pengguna')
+                    ->searchable(),
 
-                // 4. Menggabungkan Departemen dan Lokasi
-                TextColumn::make('department.name')
-                    ->label('Pengguna & Lokasi')
-                    ->searchable()
-                    ->description(fn($record) => $record->location?->name),
-
-                // 5. Fokus Utama Aplikasi: EOL Date dengan Peringatan Warna
                 TextColumn::make('eol_date')
                     ->label('End of Life (EOL)')
                     ->date('d M Y')
@@ -70,27 +66,11 @@ class AssetsTable
                     ->badge()
                     ->color(
                         fn($state) =>
-                            // Jika EOL lewat atau kurang dari 3 bulan, jadikan merah
                         ($state && \Carbon\Carbon::parse($state) <= now()->addMonths(3)) ? 'danger' : 'success'
                     ),
 
-                // 6. Harga Beli (Format Rupiah)
-                TextColumn::make('purchase_cost')
-                    ->label('Harga Beli')
-                    ->money('IDR', locale: 'id')
-                    ->sortable()
-                    ->alignment('right'),
-
-                // ==========================================
-                // KOLOM SEKUNDER (Sembunyikan Secara Default)
-                // ==========================================
                 TextColumn::make('brand')
                     ->label('Merek')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('model_number')
-                    ->label('Model')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -100,31 +80,8 @@ class AssetsTable
                     ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('vendor.name')
-                    ->label('Vendor')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('purchase_date')
                     ->label('Tgl Beli')
-                    ->date('d M Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('useful_life_years')
-                    ->label('Umur Ekonomis')
-                    ->numeric()
-                    ->suffix(' Thn')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                IconColumn::make('is_subscription')
-                    ->label('SaaS/Langganan')
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('subscription_expiry')
-                    ->label('Kadaluarsa Langganan')
                     ->date('d M Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -135,24 +92,27 @@ class AssetsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-
-            // --- MENAMBAHKAN FILTER DASAR ---
             ->filters([
-                SelectFilter::make('asset_type')
-                    ->label('Tipe Aset')
+                SelectFilter::make('category')
+                    ->label('Kategori')
                     ->options([
-                        'Hardware' => 'Hardware',
-                        'Software' => 'Software',
+                        'IT Equipment' => 'Peralatan IT',
+                        'Software' => 'Perangkat Lunak',
+                        'Furniture' => 'Mebel',
+                        'Vehicles' => 'Kendaraan',
+                        'Machinery' => 'Mesin',
                     ]),
 
-                SelectFilter::make('status_id')
-                    ->relationship('status', 'name')
+                SelectFilter::make('status')
                     ->label('Status Aset')
-                    ->preload()
-                    ->multiple(), // Bisa filter lebih dari 1 status sekaligus
-
-                TernaryFilter::make('is_critical')
-                    ->label('Hanya Aset Kritis'),
+                    ->options([
+                        'Active' => 'Aktif',
+                        'Maintenance' => 'Dalam Perbaikan',
+                        'End of Life' => 'Pensiun (EOL)',
+                        'Disposed' => 'Dihapus',
+                        'Lost' => 'Hilang',
+                    ])
+                    ->multiple(),
 
                 \Filament\Tables\Filters\Filter::make('eol_status')
                     ->form([
@@ -195,28 +155,14 @@ class AssetsTable
                     ->modalHeading('Pensiunkan Aset EOL')
                     ->modalDescription('Apakah Anda yakin ingin mengubah status aset ini menjadi End of Life (Pensiun)?')
                     ->action(function ($record) {
-                        $statusEol = \App\Models\Status::where('name', 'like', '%End of Life%')->first();
-                        if ($statusEol) {
-                            $oldStatusId = $record->status_id;
-                            $record->update(['status_id' => $statusEol->id]);
-
-                            if (class_exists(\App\Models\AssetHistory::class)) {
-                                \App\Models\AssetHistory::create([
-                                    'asset_id' => $record->id,
-                                    'user_id' => Auth::id() ?? 1,
-                                    'action' => 'Pensiunkan Aset (Sistem)',
-                                    'old_value' => ['status_id' => $oldStatusId],
-                                    'new_value' => ['status_id' => $statusEol->id],
-                                ]);
-                            }
-                        }
+                        $record->update(['status' => 'End of Life']);
                     })
-                    ->visible(fn($record) => $record->eol_date && \Carbon\Carbon::parse($record->eol_date) <= now()->addMonths(3)),
+                    ->visible(fn($record) => $record->eol_date && \Carbon\Carbon::parse($record->eol_date) <= now()->addMonths(3) && !in_array($record->status, ['End of Life', 'Disposed'])),
 
                 Action::make('cetak_detail')
                     ->label('Cetak Detail')
                     ->icon('heroicon-o-printer')
-                    ->color('success') // Warna hijau standar Filament
+                    ->color('success')
                     ->url(fn($record) => route('asset.cetakDetailPdf', $record->id))
                     ->openUrlInNewTab(),
                 ViewAction::make(),
@@ -227,7 +173,6 @@ class AssetsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            // Menambahkan Default Sorting agar aset yang EOL-nya paling dekat muncul di atas
             ->defaultSort('eol_date', 'asc');
     }
 }

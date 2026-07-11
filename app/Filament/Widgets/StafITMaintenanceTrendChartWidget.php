@@ -13,7 +13,7 @@ class StafITMaintenanceTrendChartWidget extends ChartWidget
     protected ?string $heading = 'Tren Pemeliharaan Aset Tahun Ini';
     protected static ?int $sort = 3;
     protected string $color = 'info';
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 1;
 
     public static function canView(): bool
     {

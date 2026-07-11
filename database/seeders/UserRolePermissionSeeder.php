@@ -18,18 +18,10 @@ class UserRolePermissionSeeder extends Seeder
     {
         $models = [
             'Asset',
-            'AssetAttachment',
-            'AssetHistory',
-            'Category',
-            'Department',
-            'Location',
             'MaintenanceLog',
             'Permission',
             'Role',
-            'SoftwareLicenseDetail',
-            'Status',
             'User',
-            'Vendor',
         ];
 
         $actions = [
@@ -50,9 +42,9 @@ class UserRolePermissionSeeder extends Seeder
                 $permissions[] = "{$action} {$modelName}";
             }
         }
-        
+
         // Add widget permissions if any or let them be checked via roles
-        
+
         // Create permissions
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
@@ -62,7 +54,7 @@ class UserRolePermissionSeeder extends Seeder
         $administrator = Role::firstOrCreate(['name' => 'Administrator']);
         $administrator->syncPermissions($permissions); // All permissions
 
-        $viewPermissions = array_filter($permissions, function($permission) {
+        $viewPermissions = array_filter($permissions, function ($permission) {
             return str_starts_with($permission, 'View Any') || str_starts_with($permission, 'View');
         });
 
@@ -75,20 +67,20 @@ class UserRolePermissionSeeder extends Seeder
         // Create users and assign roles
         $users = [
             [
-                'name' => 'Administrator',
-                'email' => 'admin@starter.com',
+                'name' => 'Rizky Apriana',
+                'email' => 'admin@kaltimmethanol.co.id',
                 'password' => Hash::make('12345678'),
                 'role' => 'Administrator',
             ],
             [
-                'name' => 'Staf IT',
-                'email' => 'stafit@starter.com',
+                'name' => 'Ahmad Kurniawan',
+                'email' => 'staff.it@kaltimmethanol.co.id',
                 'password' => Hash::make('12345678'),
                 'role' => 'Staf IT',
             ],
             [
-                'name' => 'Pimpinan',
-                'email' => 'pimpinan@starter.com',
+                'name' => 'Bambang Sugeng',
+                'email' => 'pimpinan@kaltimmethanol.co.id',
                 'password' => Hash::make('12345678'),
                 'role' => 'Pimpinan',
             ],
