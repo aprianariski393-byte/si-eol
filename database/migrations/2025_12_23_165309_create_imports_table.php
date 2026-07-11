@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('imports', function (Blueprint $table): void {
             $table->id();
             $table->timestamp('completed_at')->nullable();
-            $table->string('file_name');
-            $table->string('file_path');
-            $table->string('importer');
+            $table->string('file_name', 50);
+            $table->string('file_path', 50);
+            $table->string('importer', 50);
             $table->unsignedInteger('processed_rows')->default(0);
             $table->unsignedInteger('total_rows');
             $table->unsignedInteger('successful_rows')->default(0);

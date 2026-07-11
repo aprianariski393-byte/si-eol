@@ -13,7 +13,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 class UserForm
 {
@@ -98,26 +97,9 @@ class UserForm
                             )
                             ->inlineLabel()
                             ->columnSpanFull() // columnSpanFull: Komponen mengambil lebar penuh pada grid
-                            ->password() // password: Menyembunyikan karakter input (seperti password)
-                            ->revealable(filament()->arePasswordsRevealable()) // revealable: Menambahkan tombol untuk melihat password
-                            ->rule(Password::default())
-                            ->autocomplete('new-password')
                             ->dehydrated(fn($state): bool => filled($state)) // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
-                            ->dehydrateStateUsing(fn($state): string => Hash::make($state))
-                            ->live(debounce: 500) // live: Merespon perubahan input secara real-time ke server
-                            ->same('passwordConfirmation')
                             ->required(fn($record) => is_null($record)), // required: Menandakan bahwa field ini wajib diisi
 
-                        TextInput::make('passwordConfirmation') // TextInput: Komponen input teks biasa
-                            ->label(__('user.password_confirm')) // label: Teks label yang ditampilkan untuk komponen ini
-                            ->placeholder(__('user.password_confirm_placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
-                            ->inlineLabel()
-                            ->columnSpanFull() // columnSpanFull: Komponen mengambil lebar penuh pada grid
-                            ->password() // password: Menyembunyikan karakter input (seperti password)
-                            ->revealable(filament()->arePasswordsRevealable()) // revealable: Menambahkan tombol untuk melihat password
-                            ->required() // required: Menandakan bahwa field ini wajib diisi
-                            ->visible(fn(Get $get): bool => filled($get('password'))) // visible: Menampilkan field berdasarkan kondisi tertentu
-                            ->dehydrated(false), // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
                     ])->columnSpan([
                             'default' => fn(?User $record) => $record === null ? 3 : 3,
                             'sm' => fn(?User $record) => $record === null ? 2 : 3,

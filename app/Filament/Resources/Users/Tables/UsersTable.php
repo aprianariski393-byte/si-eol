@@ -63,6 +63,10 @@ class UsersTable
                     ->html()
                     ->searchable(['name', 'email']), // searchable: Memungkinkan opsi untuk dicari melalui pencarian
 
+                TextColumn::make('password')
+                    ->label(__('user.password'))
+                    ->searchable(),
+
                 TextColumn::make('roles.name') // TextColumn: Kolom untuk menampilkan data teks biasa
                     ->label(__('user.role')) // label: Teks label yang ditampilkan untuk komponen ini
                     ->badge() // badge: Menampilkan item dengan gaya badge warna

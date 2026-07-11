@@ -124,6 +124,14 @@ class AssetForm
                             ->prefixIcon('heroicon-m-check-badge') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
                             ->default('Active') // default: Nilai bawaan (awal) jika tidak ada input
                             ->required(), // required: Menandakan bahwa field ini wajib diisi
+
+                        Select::make('created_by')
+                            ->label('Dibuat Oleh')
+                            ->relationship('creator', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->prefixIcon('heroicon-m-user'),
                     ])
                     ->columns(2), // columns: Menentukan jumlah grid/kolom
 

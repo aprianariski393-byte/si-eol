@@ -115,8 +115,12 @@ class AssetInfolist
                             ->label('Terakhir Diperbarui') // label: Teks label yang ditampilkan untuk komponen ini
                             ->dateTime('d M Y, H:i') // dateTime: Format data sebagai tanggal dan waktu
                             ->color('gray'),
+
+                        TextEntry::make('creator.name')
+                            ->label('Didaftarkan Oleh')
+                            ->placeholder('Tidak diketahui'),
                     ])
-                    ->columns(2) // columns: Menentukan jumlah grid/kolom
+                    ->columns(3) // columns: Menentukan jumlah grid/kolom
                     ->columnSpanFull(), // columnSpanFull: Komponen mengambil lebar penuh pada grid
             ]);
     }

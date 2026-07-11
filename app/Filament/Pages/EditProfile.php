@@ -11,7 +11,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Auth\Pages\EditProfile as BaseEditProfile;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 class EditProfile extends BaseEditProfile
 {
@@ -62,23 +61,7 @@ class EditProfile extends BaseEditProfile
                                 TextInput::make('password') // TextInput: Komponen input teks biasa
                                     ->label(__('filament-panels::pages/auth/edit-profile.form.password.label')) // label: Teks label yang ditampilkan untuk komponen ini
                                     ->placeholder(__('filament-panels::pages/auth/edit-profile.form.password.placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
-                                    ->password() // password: Menyembunyikan karakter input (seperti password)
-                                    ->revealable(filament()->arePasswordsRevealable()) // revealable: Menambahkan tombol untuk melihat password
-                                    ->rule(Password::default())
-                                    ->autocomplete('new-password')
-                                    ->dehydrated(fn($state): bool => filled($state)) // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
-                                    ->dehydrateStateUsing(fn($state): string => Hash::make($state))
-                                    ->live(debounce: 500) // live: Merespon perubahan input secara real-time ke server
-                                    ->same('passwordConfirmation'),
-
-                                TextInput::make('passwordConfirmation') // TextInput: Komponen input teks biasa
-                                    ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label')) // label: Teks label yang ditampilkan untuk komponen ini
-                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
-                                    ->password() // password: Menyembunyikan karakter input (seperti password)
-                                    ->revealable(filament()->arePasswordsRevealable()) // revealable: Menambahkan tombol untuk melihat password
-                                    ->required() // required: Menandakan bahwa field ini wajib diisi
-                                    ->visible(fn(Get $get): bool => filled($get('password'))) // visible: Menampilkan field berdasarkan kondisi tertentu
-                                    ->dehydrated(false), // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
+                                    ->dehydrated(fn ($state) => filled($state)),
                             ])
                     ]),
             ]);

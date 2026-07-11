@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('asset_id')->constrained()->cascadeOnDelete();
             $table->date('maintenance_date');
-            $table->string('maintenance_type', 100)->nullable();
+            $table->string('maintenance_type', 30)->nullable();
             $table->text('description')->nullable();
             $table->decimal('cost', 15, 2)->nullable();
-            $table->string('performed_by')->nullable();
+            $table->string('performed_by', 45)->nullable();
             $table->date('next_maintenance_date')->nullable();
             $table->timestamps();
         });

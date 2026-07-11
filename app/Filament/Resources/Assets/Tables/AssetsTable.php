@@ -94,6 +94,11 @@ class AssetsTable
                     ->dateTime('d M Y') // dateTime: Format data sebagai tanggal dan waktu
                     ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
                     ->toggleable(isToggledHiddenByDefault: true), // toggleable: Kolom bisa disembunyikan/dimunculkan dari pengaturan kolom
+
+                TextColumn::make('creator.name')
+                    ->label('Dibuat Oleh')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('category')
