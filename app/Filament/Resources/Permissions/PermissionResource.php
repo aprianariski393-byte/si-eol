@@ -26,14 +26,23 @@ class PermissionResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Key;
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
+    /**
+     * Fungsi getNavigationLabel.
+     */
     public static function getNavigationLabel(): string
     {
         return __('permission.permission_label');
     }
+    /**
+     * Fungsi getModelLabel.
+     */
     public static function getModelLabel(): string
     {
         return __('permission.permission_label');
     }
+    /**
+     * Fungsi getPluralModelLabel.
+     */
     public static function getPluralModelLabel(): string
     {
         return __('permission.permissions');
@@ -43,21 +52,33 @@ class PermissionResource extends Resource
     protected static ?string $slug = 'permissions';
 
 
+    /**
+     * Konfigurasi form untuk resource ini.
+     */
     public static function form(Schema $schema): Schema
     {
         return PermissionForm::configure($schema);
     }
 
+    /**
+     * Konfigurasi tampilan informasi detail data.
+     */
     public static function infolist(Schema $schema): Schema
     {
         return PermissionInfolist::configure($schema);
     }
 
+    /**
+     * Konfigurasi tabel untuk menampilkan daftar data.
+     */
     public static function table(Table $table): Table
     {
         return PermissionsTable::configure($table);
     }
 
+    /**
+     * Mengambil daftar relasi (relations) yang terkait dengan resource ini.
+     */
     public static function getRelations(): array
     {
         return [
@@ -65,6 +86,9 @@ class PermissionResource extends Resource
         ];
     }
 
+    /**
+     * Mendefinisikan rute dan halaman-halaman yang tersedia untuk resource ini.
+     */
     public static function getPages(): array
     {
         return [

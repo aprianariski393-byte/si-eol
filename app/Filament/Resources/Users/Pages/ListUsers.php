@@ -11,11 +11,14 @@ class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
+    /**
+     * Mendapatkan daftar aksi (actions) pada bagian header halaman.
+     */
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make()
-                ->label(__('user.create_user'))
+                ->label(__('user.create_user')) // label: Teks label yang ditampilkan untuk komponen ini
                 ->icon(Heroicon::UserPlus),
         ];
     }

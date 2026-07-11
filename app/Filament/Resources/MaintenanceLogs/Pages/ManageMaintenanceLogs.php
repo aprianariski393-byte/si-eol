@@ -10,6 +10,9 @@ class ManageMaintenanceLogs extends ManageRecords
 {
     protected static string $resource = MaintenanceLogResource::class;
 
+    /**
+     * Mendapatkan daftar aksi (actions) pada bagian header halaman.
+     */
     protected function getHeaderActions(): array
     {
         return [

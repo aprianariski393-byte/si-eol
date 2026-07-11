@@ -14,13 +14,16 @@ class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
+    /**
+     * Mendapatkan daftar aksi (actions) pada bagian header halaman.
+     */
     protected function getHeaderActions(): array
     {
         return [
             DeleteAction::make()
-                ->label(__('user.delete_user'))
+                ->label(__('user.delete_user')) // label: Teks label yang ditampilkan untuk komponen ini
                 ->icon(Heroicon::Trash)
-                ->visible(fn(): bool => $this->record->id !== Auth::id()),
+                ->visible(fn(): bool => $this->record->id !== Auth::id()), // visible: Menampilkan field berdasarkan kondisi tertentu
         ];
     }
 }

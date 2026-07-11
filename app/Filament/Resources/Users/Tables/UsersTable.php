@@ -17,13 +17,16 @@ use Illuminate\Support\Facades\Auth;
 
 class UsersTable
 {
+    /**
+     * Mengkonfigurasi pengaturan (schema/table/infolist) komponen ini.
+     */
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label(__('user.user'))
-                    ->formatStateUsing(function (User $record) {
+            ->columns([ // columns: Menentukan jumlah grid/kolom
+                TextColumn::make('name') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label(__('user.user')) // label: Teks label yang ditampilkan untuk komponen ini
+                    ->formatStateUsing(function (User $record) { // formatStateUsing: Memodifikasi atau format ulang tampilan data sebelum dimunculkan
 
                         $nameParts = explode(' ', trim($record->name));
                         $initials = isset($nameParts[1])
@@ -58,31 +61,31 @@ class UsersTable
                             ';
                     })
                     ->html()
-                    ->searchable(['name', 'email']),
+                    ->searchable(['name', 'email']), // searchable: Memungkinkan opsi untuk dicari melalui pencarian
 
-                TextColumn::make('roles.name')
-                    ->label(__('user.role'))
-                    ->badge()
+                TextColumn::make('roles.name') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label(__('user.role')) // label: Teks label yang ditampilkan untuk komponen ini
+                    ->badge() // badge: Menampilkan item dengan gaya badge warna
                     ->separator(', ')
                     ->limitList(3)
-                    ->wrap()
+                    ->wrap() // wrap: Memaksa teks panjang untuk dilipat ke baris bawah
                     ->color('info'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
+                ActionGroup::make([ // Group: Komponen untuk mengelompokkan elemen (layout murni)
                     EditAction::make()
-                        ->label(__('user.edit_user'))
+                        ->label(__('user.edit_user')) // label: Teks label yang ditampilkan untuk komponen ini
                         ->icon(Heroicon::PencilSquare)
                         ->outlined(),
                     DeleteAction::make()
-                        ->label(__('user.delete_user'))
+                        ->label(__('user.delete_user')) // label: Teks label yang ditampilkan untuk komponen ini
                         ->icon(Heroicon::Trash)
-                        ->visible(fn(User $record): bool => $record->id !== Auth::id()),
+                        ->visible(fn(User $record): bool => $record->id !== Auth::id()), // visible: Menampilkan field berdasarkan kondisi tertentu
                 ])
-                    ->label('')
+                    ->label('') // label: Teks label yang ditampilkan untuk komponen ini
                     ->icon('heroicon-m-ellipsis-horizontal')
                     ->size(Size::Small)
                     ->color('info')
@@ -90,7 +93,7 @@ class UsersTable
                     ->button(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
+                BulkActionGroup::make([ // Group: Komponen untuk mengelompokkan elemen (layout murni)
                     DeleteBulkAction::make(),
                 ]),
             ]);

@@ -38,168 +38,177 @@ class MaintenanceLogResource extends Resource
     protected static ?string $modelLabel = 'Catatan Pemeliharaan';
     protected static ?string $pluralModelLabel = 'Riwayat Pemeliharaan';
 
+    /**
+     * Konfigurasi form untuk resource ini.
+     */
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 // KELOMPOK 1: Detail Pelaksanaan
-                Section::make('Informasi Pelaksanaan')
+                Section::make('Informasi Pelaksanaan') // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                     ->icon(Heroicon::OutlinedClipboardDocumentCheck)
                     ->schema([
-                        Select::make('asset_id')
-                            ->relationship('asset', 'name')
-                            ->label('Aset Terkait')
-                            ->searchable()
-                            ->preload()
-                            ->required()
-                            ->native(false)
-                            ->prefixIcon('heroicon-m-cube')
-                            ->placeholder('Pilih Aset...')
-                            ->columnSpanFull(),
+                        Select::make('asset_id') // Select: Komponen dropdown untuk memilih opsi
+                            ->relationship('asset', 'name') // relationship: Mengambil data dari relasi model
+                            ->label('Aset Terkait') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
+                            ->preload() // preload: Memuat data terlebih dahulu sebelum pencarian
+                            ->required() // required: Menandakan bahwa field ini wajib diisi
+                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->prefixIcon('heroicon-m-cube') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->placeholder('Pilih Aset...') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->columnSpanFull(), // columnSpanFull: Komponen mengambil lebar penuh pada grid
 
-                        DatePicker::make('maintenance_date')
-                            ->label('Tanggal Pemeliharaan')
-                            ->native(false)
-                            ->displayFormat('d M Y')
-                            ->required()
-                            ->prefixIcon('heroicon-m-calendar')
+                        DatePicker::make('maintenance_date') // DatePicker: Komponen input tanggal
+                            ->label('Tanggal Pemeliharaan') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->displayFormat('d M Y') // displayFormat: Format tampilan (misal format penulisan tanggal)
+                            ->required() // required: Menandakan bahwa field ini wajib diisi
+                            ->prefixIcon('heroicon-m-calendar') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
                             ->default(now()), // Default ke hari ini
 
-                        TextInput::make('maintenance_type')
-                            ->label('Jenis Pemeliharaan')
-                            ->placeholder('Contoh: Patching / Upgrade RAM / Ganti Oli')
-                            ->maxLength(100)
-                            ->prefixIcon('heroicon-m-wrench')
-                            ->required(),
+                        TextInput::make('maintenance_type') // TextInput: Komponen input teks biasa
+                            ->label('Jenis Pemeliharaan') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Contoh: Patching / Upgrade RAM / Ganti Oli') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->maxLength(100) // maxLength: Batas maksimal jumlah karakter
+                            ->prefixIcon('heroicon-m-wrench') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->required(), // required: Menandakan bahwa field ini wajib diisi
 
-                        TextInput::make('performed_by')
-                            ->label('Dilakukan Oleh (Teknisi/Vendor)')
-                            ->placeholder('Nama internal atau pihak ketiga')
-                            ->prefixIcon('heroicon-m-user-circle')
-                            ->maxLength(255),
+                        TextInput::make('performed_by') // TextInput: Komponen input teks biasa
+                            ->label('Dilakukan Oleh (Teknisi/Vendor)') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Nama internal atau pihak ketiga') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->prefixIcon('heroicon-m-user-circle') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->maxLength(255), // maxLength: Batas maksimal jumlah karakter
                     ])
-                    ->columns(3)
+                    ->columns(3) // columns: Menentukan jumlah grid/kolom
                     ->columnSpanFull(), // <-- Sesuai SOP Filament 4
 
                 // KELOMPOK 2: Biaya & Penjadwalan Lanjutan
-                Section::make('Biaya & Tindak Lanjut')
+                Section::make('Biaya & Tindak Lanjut') // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                     ->icon(Heroicon::OutlinedBanknotes)
                     ->schema([
-                        TextInput::make('cost')
-                            ->label('Biaya Pemeliharaan')
-                            ->numeric()
+                        TextInput::make('cost') // TextInput: Komponen input teks biasa
+                            ->label('Biaya Pemeliharaan') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->numeric() // numeric: Memastikan input/kolom berupa angka
                             ->prefix('Rp')
-                            ->prefixIcon('heroicon-m-banknotes')
-                            ->placeholder('0')
+                            ->prefixIcon('heroicon-m-banknotes') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->placeholder('0') // placeholder: Teks abu-abu panduan saat input kosong
                             ->maxValue(999999999999.99),
 
-                        DatePicker::make('next_maintenance_date')
-                            ->label('Jadwal Pemeliharaan Berikutnya')
-                            ->native(false)
-                            ->displayFormat('d M Y')
-                            ->prefixIcon('heroicon-m-calendar-days')
-                            ->placeholder('Pilih Tanggal...')
-                            ->helperText('Kosongkan jika tidak ada jadwal rutin.'),
+                        DatePicker::make('next_maintenance_date') // DatePicker: Komponen input tanggal
+                            ->label('Jadwal Pemeliharaan Berikutnya') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->displayFormat('d M Y') // displayFormat: Format tampilan (misal format penulisan tanggal)
+                            ->prefixIcon('heroicon-m-calendar-days') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->placeholder('Pilih Tanggal...') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->helperText('Kosongkan jika tidak ada jadwal rutin.'), // helperText: Teks bantuan kecil di bawah komponen
 
-                        Textarea::make('description')
-                            ->label('Catatan Hasil / Deskripsi Masalah')
-                            ->placeholder('Jelaskan apa saja yang diperbaiki atau diganti...')
+                        Textarea::make('description') // Textarea: Komponen input teks panjang
+                            ->label('Catatan Hasil / Deskripsi Masalah') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Jelaskan apa saja yang diperbaiki atau diganti...') // placeholder: Teks abu-abu panduan saat input kosong
                             ->rows(3)
-                            ->columnSpanFull(),
+                            ->columnSpanFull(), // columnSpanFull: Komponen mengambil lebar penuh pada grid
                     ])
-                    ->columns(2)
+                    ->columns(2) // columns: Menentukan jumlah grid/kolom
                     ->columnSpanFull(), // <-- Sesuai SOP Filament 4
             ]);
     }
 
+    /**
+     * Konfigurasi tampilan informasi detail data.
+     */
     public static function infolist(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('Detail Catatan Pemeliharaan')
+                Section::make('Detail Catatan Pemeliharaan') // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                     ->schema([
-                        TextEntry::make('asset.name')
-                            ->label('Nama Aset')
+                        TextEntry::make('asset.name') // TextEntry: Menampilkan nilai berupa teks
+                            ->label('Nama Aset') // label: Teks label yang ditampilkan untuk komponen ini
                             ->weight('bold')
                             ->color('primary')
-                            ->columnSpanFull(),
+                            ->columnSpanFull(), // columnSpanFull: Komponen mengambil lebar penuh pada grid
 
-                        TextEntry::make('maintenance_date')
-                            ->label('Tanggal Pelaksanaan')
-                            ->date('d F Y')
-                            ->placeholder('-'),
+                        TextEntry::make('maintenance_date') // TextEntry: Menampilkan nilai berupa teks
+                            ->label('Tanggal Pelaksanaan') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->date('d F Y') // date: Format data sebagai tanggal saja
+                            ->placeholder('-'), // placeholder: Teks abu-abu panduan saat input kosong
 
-                        TextEntry::make('maintenance_type')
-                            ->label('Jenis Pemeliharaan')
-                            ->badge()
+                        TextEntry::make('maintenance_type') // TextEntry: Menampilkan nilai berupa teks
+                            ->label('Jenis Pemeliharaan') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->badge() // badge: Menampilkan item dengan gaya badge warna
                             ->color('info')
-                            ->placeholder('-'),
+                            ->placeholder('-'), // placeholder: Teks abu-abu panduan saat input kosong
 
-                        TextEntry::make('performed_by')
-                            ->label('Teknisi')
+                        TextEntry::make('performed_by') // TextEntry: Menampilkan nilai berupa teks
+                            ->label('Teknisi') // label: Teks label yang ditampilkan untuk komponen ini
                             ->icon(Heroicon::OutlinedUser)
-                            ->placeholder('Tidak diketahui'),
+                            ->placeholder('Tidak diketahui'), // placeholder: Teks abu-abu panduan saat input kosong
 
-                        TextEntry::make('cost')
-                            ->label('Total Biaya')
+                        TextEntry::make('cost') // TextEntry: Menampilkan nilai berupa teks
+                            ->label('Total Biaya') // label: Teks label yang ditampilkan untuk komponen ini
                             ->money('IDR', locale: 'id')
                             ->weight('semibold')
-                            ->placeholder('Rp 0,00'),
+                            ->placeholder('Rp 0,00'), // placeholder: Teks abu-abu panduan saat input kosong
 
-                        TextEntry::make('next_maintenance_date')
-                            ->label('Jadwal Berikutnya')
-                            ->date('d M Y')
-                            ->badge()
+                        TextEntry::make('next_maintenance_date') // TextEntry: Menampilkan nilai berupa teks
+                            ->label('Jadwal Berikutnya') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->date('d M Y') // date: Format data sebagai tanggal saja
+                            ->badge() // badge: Menampilkan item dengan gaya badge warna
                             ->color(
                                 fn($state) =>
                                 // Beri warna merah jika jadwal berikutnya sudah terlewat
                                 ($state && \Carbon\Carbon::parse($state) < now()) ? 'danger' : 'success'
                             )
-                            ->placeholder('Tidak terjadwal'),
+                            ->placeholder('Tidak terjadwal'), // placeholder: Teks abu-abu panduan saat input kosong
 
-                        TextEntry::make('description')
-                            ->label('Deskripsi Pekerjaan')
-                            ->placeholder('Tidak ada catatan spesifik.')
-                            ->columnSpanFull(),
+                        TextEntry::make('description') // TextEntry: Menampilkan nilai berupa teks
+                            ->label('Deskripsi Pekerjaan') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Tidak ada catatan spesifik.') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->columnSpanFull(), // columnSpanFull: Komponen mengambil lebar penuh pada grid
                     ])
-                    ->columns(3)
+                    ->columns(3) // columns: Menentukan jumlah grid/kolom
                     ->columnSpanFull(), // <-- Sesuai SOP Filament 4
             ]);
     }
 
+    /**
+     * Konfigurasi tabel untuk menampilkan daftar data.
+     */
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('maintenance_type')
-            ->columns([
-                TextColumn::make('maintenance_date')
-                    ->label('Tanggal')
-                    ->date('d M Y')
-                    ->sortable()
+            ->columns([ // columns: Menentukan jumlah grid/kolom
+                TextColumn::make('maintenance_date') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Tanggal') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->date('d M Y') // date: Format data sebagai tanggal saja
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
                     ->weight('bold'),
 
-                TextColumn::make('asset.name')
-                    ->label('Aset')
-                    ->searchable()
+                TextColumn::make('asset.name') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Aset') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
                     // Menggabungkan jenis pemeliharaan di bawah nama aset agar hemat kolom
                     ->description(fn(MaintenanceLog $record) => 'Jenis: ' . ($record->maintenance_type ?? '-')),
 
-                TextColumn::make('performed_by')
-                    ->label('Teknisi/Vendor')
-                    ->searchable()
-                    ->placeholder('-'),
+                TextColumn::make('performed_by') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Teknisi/Vendor') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
+                    ->placeholder('-'), // placeholder: Teks abu-abu panduan saat input kosong
 
-                TextColumn::make('cost')
-                    ->label('Biaya')
+                TextColumn::make('cost') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Biaya') // label: Teks label yang ditampilkan untuk komponen ini
                     ->money('IDR', locale: 'id')
-                    ->sortable()
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
                     ->alignment('right'),
 
-                TextColumn::make('next_maintenance_date')
-                    ->label('Jadwal Berikutnya')
-                    ->date('d M Y')
-                    ->sortable()
-                    ->badge()
+                TextColumn::make('next_maintenance_date') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Jadwal Berikutnya') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->date('d M Y') // date: Format data sebagai tanggal saja
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
+                    ->badge() // badge: Menampilkan item dengan gaya badge warna
                     ->color(
                         fn($state) => ($state && \Carbon\Carbon::parse($state) < now()) ? 'danger' : 'gray'
                     ),
@@ -213,7 +222,7 @@ class MaintenanceLogResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
+                BulkActionGroup::make([ // Group: Komponen untuk mengelompokkan elemen (layout murni)
                     DeleteBulkAction::make(),
                 ]),
             ])
@@ -221,6 +230,9 @@ class MaintenanceLogResource extends Resource
             ->defaultSort('maintenance_date', 'desc');
     }
 
+    /**
+     * Mendefinisikan rute dan halaman-halaman yang tersedia untuk resource ini.
+     */
     public static function getPages(): array
     {
         return [

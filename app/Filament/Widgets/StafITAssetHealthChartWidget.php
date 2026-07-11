@@ -9,16 +9,22 @@ use Illuminate\Support\Facades\Auth;
 
 class StafITAssetHealthChartWidget extends ChartWidget
 {
-    protected ?string $heading = 'Status Kesehatan & Siklus Hidup Aset';
+    protected ?string $heading = 'Status Kesehatan & Siklus Hidup Aset'; // heading: Judul yang ditampilkan pada bagian atas widget
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 2; // sort: Urutan prioritas widget saat ditampilkan di halaman dashboard
 
-    public static function canView(): bool
+    /**
+     * Fungsi canView.
+     */
+    public static function canView(): bool // canView: Menentukan apakah user yang login memiliki akses untuk melihat widget ini
     {
         return Auth::check() && Auth::user()->hasRole('Staf IT');
     }
 
-    protected function getData(): array
+    /**
+     * Mendapatkan data statistik untuk ditampilkan pada chart.
+     */
+    protected function getData(): array // getData: Mengembalikan susunan data dataset dan label yang akan dirender oleh chart
     {
         $now = Carbon::now();
         $warningDate = Carbon::now()->addMonths(3);
@@ -64,7 +70,10 @@ class StafITAssetHealthChartWidget extends ChartWidget
         ];
     }
 
-    protected function getType(): string
+    /**
+     * Mendapatkan tipe chart (misal: line, bar, pie, dll).
+     */
+    protected function getType(): string // getType: Menentukan tipe visualisasi chart (bar, line, pie, doughnut, polarArea)
     {
         return 'pie';
     }

@@ -11,11 +11,14 @@ class ListPermissions extends ListRecords
 {
     protected static string $resource = PermissionResource::class;
 
+    /**
+     * Mendapatkan daftar aksi (actions) pada bagian header halaman.
+     */
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make()
-                ->label(__('permission.create_permission'))
+                ->label(__('permission.create_permission')) // label: Teks label yang ditampilkan untuk komponen ini
                 ->icon(Heroicon::PlusCircle),
         ];
     }

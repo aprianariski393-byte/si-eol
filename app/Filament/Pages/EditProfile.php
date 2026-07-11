@@ -15,6 +15,9 @@ use Illuminate\Validation\Rules\Password;
 
 class EditProfile extends BaseEditProfile
 {
+    /**
+     * Konfigurasi form untuk resource ini.
+     */
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -23,59 +26,59 @@ class EditProfile extends BaseEditProfile
                     ->tabs([
                         Tab::make('Informasi Pribadi')
                             ->schema([
-                                FileUpload::make('avatar_url')
-                                    ->label(__('filament-panels::pages/auth/edit-profile.form.avatar.label'))
+                                FileUpload::make('avatar_url') // FileUpload: Komponen untuk mengunggah file
+                                    ->label(__('filament-panels::pages/auth/edit-profile.form.avatar.label')) // label: Teks label yang ditampilkan untuk komponen ini
                                     ->image()
                                     ->imageEditor()
                                     ->imageEditorAspectRatios([
                                         '1:1',
                                     ])
                                     ->imageCropAspectRatio('1:1')
-                                    ->directory('avatar_upload')
+                                    ->directory('avatar_upload') // directory: Folder tujuan penyimpanan file unggahan
                                     ->visibility('public')
-                                    ->helperText(__('filament-panels::pages/auth/edit-profile.form.avatar.helper'))
-                                    ->columnSpanFull(),
+                                    ->helperText(__('filament-panels::pages/auth/edit-profile.form.avatar.helper')) // helperText: Teks bantuan kecil di bawah komponen
+                                    ->columnSpanFull(), // columnSpanFull: Komponen mengambil lebar penuh pada grid
 
-                                TextInput::make('name')
-                                    ->label(__('filament-panels::pages/auth/edit-profile.form.name.label'))
-                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.name.placeholder'))
+                                TextInput::make('name') // TextInput: Komponen input teks biasa
+                                    ->label(__('filament-panels::pages/auth/edit-profile.form.name.label')) // label: Teks label yang ditampilkan untuk komponen ini
+                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.name.placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
                                     ->inlineLabel()
-                                    ->required()
-                                    ->maxLength(255)
+                                    ->required() // required: Menandakan bahwa field ini wajib diisi
+                                    ->maxLength(255) // maxLength: Batas maksimal jumlah karakter
                                     ->autofocus(),
 
-                                TextInput::make('email')
-                                    ->label(__('filament-panels::pages/auth/edit-profile.form.email.label'))
-                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.email.placeholder'))
+                                TextInput::make('email') // TextInput: Komponen input teks biasa
+                                    ->label(__('filament-panels::pages/auth/edit-profile.form.email.label')) // label: Teks label yang ditampilkan untuk komponen ini
+                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.email.placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
                                     ->inlineLabel()
-                                    ->email()
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique(ignoreRecord: true),
+                                    ->email() // email: Memvalidasi input agar berformat email yang benar
+                                    ->required() // required: Menandakan bahwa field ini wajib diisi
+                                    ->maxLength(255) // maxLength: Batas maksimal jumlah karakter
+                                    ->unique(ignoreRecord: true), // unique: Memastikan nilai unik di dalam database
                             ]),
 
                         Tab::make('Kata Sandi')
                             ->schema([
-                                TextInput::make('password')
-                                    ->label(__('filament-panels::pages/auth/edit-profile.form.password.label'))
-                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.password.placeholder'))
-                                    ->password()
-                                    ->revealable(filament()->arePasswordsRevealable())
+                                TextInput::make('password') // TextInput: Komponen input teks biasa
+                                    ->label(__('filament-panels::pages/auth/edit-profile.form.password.label')) // label: Teks label yang ditampilkan untuk komponen ini
+                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.password.placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
+                                    ->password() // password: Menyembunyikan karakter input (seperti password)
+                                    ->revealable(filament()->arePasswordsRevealable()) // revealable: Menambahkan tombol untuk melihat password
                                     ->rule(Password::default())
                                     ->autocomplete('new-password')
-                                    ->dehydrated(fn($state): bool => filled($state))
+                                    ->dehydrated(fn($state): bool => filled($state)) // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
                                     ->dehydrateStateUsing(fn($state): string => Hash::make($state))
-                                    ->live(debounce: 500)
+                                    ->live(debounce: 500) // live: Merespon perubahan input secara real-time ke server
                                     ->same('passwordConfirmation'),
 
-                                TextInput::make('passwordConfirmation')
-                                    ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label'))
-                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.placeholder'))
-                                    ->password()
-                                    ->revealable(filament()->arePasswordsRevealable())
-                                    ->required()
-                                    ->visible(fn(Get $get): bool => filled($get('password')))
-                                    ->dehydrated(false),
+                                TextInput::make('passwordConfirmation') // TextInput: Komponen input teks biasa
+                                    ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label')) // label: Teks label yang ditampilkan untuk komponen ini
+                                    ->placeholder(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
+                                    ->password() // password: Menyembunyikan karakter input (seperti password)
+                                    ->revealable(filament()->arePasswordsRevealable()) // revealable: Menambahkan tombol untuk melihat password
+                                    ->required() // required: Menandakan bahwa field ini wajib diisi
+                                    ->visible(fn(Get $get): bool => filled($get('password'))) // visible: Menampilkan field berdasarkan kondisi tertentu
+                                    ->dehydrated(false), // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
                             ])
                     ]),
             ]);

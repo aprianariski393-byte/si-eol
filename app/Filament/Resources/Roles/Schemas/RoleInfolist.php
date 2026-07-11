@@ -7,28 +7,31 @@ use Filament\Schemas\Schema;
 
 class RoleInfolist
 {
+    /**
+     * Mengkonfigurasi pengaturan (schema/table/infolist) komponen ini.
+     */
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextEntry::make('name')
-                    ->label(__('role.name'))
+                TextEntry::make('name') // TextEntry: Menampilkan nilai berupa teks
+                    ->label(__('role.name')) // label: Teks label yang ditampilkan untuk komponen ini
                     ->weight('bold'),
 
-                TextEntry::make('guard_name')
-                    ->label(__('role.guard'))
-                    ->badge()
+                TextEntry::make('guard_name') // TextEntry: Menampilkan nilai berupa teks
+                    ->label(__('role.guard')) // label: Teks label yang ditampilkan untuk komponen ini
+                    ->badge() // badge: Menampilkan item dengan gaya badge warna
                     ->color('gray'),
 
-                TextEntry::make('created_at')
-                    ->label(__('role.created_at'))
-                    ->dateTime()
-                    ->placeholder('-'),
+                TextEntry::make('created_at') // TextEntry: Menampilkan nilai berupa teks
+                    ->label(__('role.created_at')) // label: Teks label yang ditampilkan untuk komponen ini
+                    ->dateTime() // dateTime: Format data sebagai tanggal dan waktu
+                    ->placeholder('-'), // placeholder: Teks abu-abu panduan saat input kosong
 
-                TextEntry::make('updated_at')
-                    ->label(__('role.updated_at'))
-                    ->dateTime()
-                    ->placeholder('-'),
+                TextEntry::make('updated_at') // TextEntry: Menampilkan nilai berupa teks
+                    ->label(__('role.updated_at')) // label: Teks label yang ditampilkan untuk komponen ini
+                    ->dateTime() // dateTime: Format data sebagai tanggal dan waktu
+                    ->placeholder('-'), // placeholder: Teks abu-abu panduan saat input kosong
             ]);
     }
 }

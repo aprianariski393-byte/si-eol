@@ -15,44 +15,47 @@ use Filament\Tables\Table;
 
 class PermissionsTable
 {
+    /**
+     * Mengkonfigurasi pengaturan (schema/table/infolist) komponen ini.
+     */
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label(__('permission.permission_name'))
+            ->columns([ // columns: Menentukan jumlah grid/kolom
+                TextColumn::make('name') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label(__('permission.permission_name')) // label: Teks label yang ditampilkan untuk komponen ini
                     ->icon(Heroicon::Key)
-                    ->searchable()
-                    ->sortable()
+                    ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
                     ->weight('bold'),
 
-                TextColumn::make('created_at')
-                    ->label(__('permission.created_at'))
+                TextColumn::make('created_at') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label(__('permission.created_at')) // label: Teks label yang ditampilkan untuk komponen ini
                     ->icon('heroicon-o-calendar')
                     ->since() // “2 hours ago”
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
+                    ->toggleable(isToggledHiddenByDefault: true), // toggleable: Kolom bisa disembunyikan/dimunculkan dari pengaturan kolom
 
-                TextColumn::make('updated_at')
-                    ->label(__('permission.updated_at'))
+                TextColumn::make('updated_at') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label(__('permission.updated_at')) // label: Teks label yang ditampilkan untuk komponen ini
                     ->icon('heroicon-o-clock')
                     ->since()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
+                    ->toggleable(isToggledHiddenByDefault: true), // toggleable: Kolom bisa disembunyikan/dimunculkan dari pengaturan kolom
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
+                ActionGroup::make([ // Group: Komponen untuk mengelompokkan elemen (layout murni)
                     EditAction::make()
-                        ->label(__('permission.edit_permission'))
+                        ->label(__('permission.edit_permission')) // label: Teks label yang ditampilkan untuk komponen ini
                         ->icon(Heroicon::PencilSquare),
                     DeleteAction::make()
-                        ->label(__('permission.delete_permission'))
+                        ->label(__('permission.delete_permission')) // label: Teks label yang ditampilkan untuk komponen ini
                         ->icon(Heroicon::Trash),
                 ])
-                    ->label('')
+                    ->label('') // label: Teks label yang ditampilkan untuk komponen ini
                     ->icon('heroicon-m-ellipsis-horizontal')
                     ->size(Size::Small)
                     ->color('info')
@@ -60,7 +63,7 @@ class PermissionsTable
                     ->button(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
+                BulkActionGroup::make([ // Group: Komponen untuk mengelompokkan elemen (layout murni)
                     DeleteBulkAction::make(),
                 ]),
             ]);

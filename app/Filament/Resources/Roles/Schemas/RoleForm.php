@@ -15,6 +15,9 @@ use Illuminate\Support\Str;
 
 class RoleForm
 {
+    /**
+     * Mengkonfigurasi pengaturan (schema/table/infolist) komponen ini.
+     */
     public static function configure(Schema $schema): Schema
     {
         // Group permissions by resource (Model name)
@@ -49,24 +52,24 @@ class RoleForm
             /**
              * LEFT PANEL — ROLE INFO
              */
-            Section::make(__('role.role_information'))
+            Section::make(__('role.role_information')) // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                 ->description(__('role.role_information_desc'))
                 ->icon('heroicon-o-identification')
                 ->schema([
-                    TextInput::make('name')
-                        ->label(__('role.role_name'))
-                        ->placeholder(__('role.role_name_placeholder'))
-                        ->required()
+                    TextInput::make('name') // TextInput: Komponen input teks biasa
+                        ->label(__('role.role_name')) // label: Teks label yang ditampilkan untuk komponen ini
+                        ->placeholder(__('role.role_name_placeholder')) // placeholder: Teks abu-abu panduan saat input kosong
+                        ->required() // required: Menandakan bahwa field ini wajib diisi
                         ->minLength(3)
-                        ->maxLength(45)
-                        ->unique(ignoreRecord: true)
-                        ->columnSpanFull(),
+                        ->maxLength(45) // maxLength: Batas maksimal jumlah karakter
+                        ->unique(ignoreRecord: true) // unique: Memastikan nilai unik di dalam database
+                        ->columnSpanFull(), // columnSpanFull: Komponen mengambil lebar penuh pada grid
 
-                    Toggle::make('select_all')
-                        ->label(__('role.select_all'))
-                        ->helperText(__('role.enable_role'))
-                        ->dehydrated(false)
-                        ->live()
+                    Toggle::make('select_all') // Toggle: Komponen tombol on/off (boolean)
+                        ->label(__('role.select_all')) // label: Teks label yang ditampilkan untuk komponen ini
+                        ->helperText(__('role.enable_role')) // helperText: Teks bantuan kecil di bawah komponen
+                        ->dehydrated(false) // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
+                        ->live() // live: Merespon perubahan input secara real-time ke server
                         ->onIcon(HeroIcon::ShieldCheck)
                         ->offIcon(HeroIcon::ShieldExclamation)
 
@@ -83,13 +86,13 @@ class RoleForm
                         })
 
                         // Saat toggle diubah
-                        ->afterStateUpdated(function (bool $state, callable $set) use ($permissionFieldMap) {
+                        ->afterStateUpdated(function (bool $state, callable $set) use ($permissionFieldMap) { // afterStateUpdated: Fungsi callback yang dijalankan setelah nilai input berubah
                             foreach ($permissionFieldMap as $field => $permissionIds) {
                                 $set($field, $state ? $permissionIds : []);
                             }
                         }),
                 ])
-                ->columns(1)
+                ->columns(1) // columns: Menentukan jumlah grid/kolom
                 ->columnSpan(1)
                 ->collapsible(),
 
@@ -108,13 +111,13 @@ class RoleForm
                             return Tab::make(Str::headline($resource))
                                 ->icon(Heroicon::Key)
                                 ->schema([
-                                    Section::make(Str::headline($resource))
+                                    Section::make(Str::headline($resource)) // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                                         ->description("App\\Models\\{$resource}")
                                         ->collapsible()
                                         ->schema([
                                             CheckboxList::make($fieldName)
-                                                ->label(__('role.permission_name'))
-                                                ->relationship(
+                                                ->label(__('role.permission_name')) // label: Teks label yang ditampilkan untuk komponen ini
+                                                ->relationship( // relationship: Mengambil data dari relasi model
                                                     'permissions',
                                                     'name',
                                                     modifyQueryUsing: fn($query) => $query->whereIn('id', $permissions->pluck('id'))
@@ -134,21 +137,21 @@ class RoleForm
                                                     return $key ? __('role.' . $key) : __($record->name);
                                                 })
                                                 ->bulkToggleable()
-                                                ->searchable()
+                                                ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
                                                 ->gridDirection('row')
-                                                ->columns([
+                                                ->columns([ // columns: Menentukan jumlah grid/kolom
                                                     'default' => 1,
                                                     'md' => 2,
                                                     'lg' => 3,
                                                 ])
-                                                ->live(),
+                                                ->live(), // live: Merespon perubahan input secara real-time ke server
                                         ]),
                                 ]);
                         })
                         ->values()
                         ->all()
                 ),
-        ])->columns(3);
+        ])->columns(3); // columns: Menentukan jumlah grid/kolom
     }
 
     /**
@@ -159,7 +162,7 @@ class RoleForm
         $allPermissions = collect($data)
             ->filter(fn($value, $key) => str_starts_with($key, 'permissions_'))
             ->flatten()
-            ->unique()
+            ->unique() // unique: Memastikan nilai unik di dalam database
             ->values()
             ->all();
 

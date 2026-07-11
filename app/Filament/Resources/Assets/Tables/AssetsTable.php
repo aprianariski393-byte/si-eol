@@ -17,22 +17,25 @@ use Illuminate\Support\Facades\Auth;
 
 class AssetsTable
 {
+    /**
+     * Mengkonfigurasi pengaturan (schema/table/infolist) komponen ini.
+     */
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label('Identitas Aset')
-                    ->searchable(['name', 'asset_code'])
+            ->columns([ // columns: Menentukan jumlah grid/kolom
+                TextColumn::make('name') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Identitas Aset') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->searchable(['name', 'asset_code']) // searchable: Memungkinkan opsi untuk dicari melalui pencarian
                     ->weight('bold')
                     ->color('primary')
                     ->description(fn($record) => 'Kode: ' . $record->asset_code)
-                    ->wrap(),
+                    ->wrap(), // wrap: Memaksa teks panjang untuk dilipat ke baris bawah
 
-                TextColumn::make('category')
-                    ->label('Kategori')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                TextColumn::make('category') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Kategori') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->badge() // badge: Menampilkan item dengan gaya badge warna
+                    ->formatStateUsing(fn (string $state): string => match ($state) { // formatStateUsing: Memodifikasi atau format ulang tampilan data sebelum dimunculkan
                         'IT Equipment' => 'Peralatan IT',
                         'Software' => 'Perangkat Lunak',
                         'Furniture' => 'Mebel',
@@ -40,12 +43,12 @@ class AssetsTable
                         'Machinery' => 'Mesin',
                         default => $state,
                     })
-                    ->searchable(),
+                    ->searchable(), // searchable: Memungkinkan opsi untuk dicari melalui pencarian
 
-                TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                TextColumn::make('status') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Status') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->badge() // badge: Menampilkan item dengan gaya badge warna
+                    ->formatStateUsing(fn (string $state): string => match ($state) { // formatStateUsing: Memodifikasi atau format ulang tampilan data sebelum dimunculkan
                         'Active' => 'Aktif',
                         'Maintenance' => 'Dalam Perbaikan',
                         'End of Life' => 'Pensiun (EOL)',
@@ -53,49 +56,49 @@ class AssetsTable
                         'Lost' => 'Hilang',
                         default => $state,
                     })
-                    ->searchable(),
+                    ->searchable(), // searchable: Memungkinkan opsi untuk dicari melalui pencarian
 
-                TextColumn::make('department')
-                    ->label('Departemen Pengguna')
-                    ->searchable(),
+                TextColumn::make('department') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Departemen Pengguna') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->searchable(), // searchable: Memungkinkan opsi untuk dicari melalui pencarian
 
-                TextColumn::make('eol_date')
-                    ->label('End of Life (EOL)')
-                    ->date('d M Y')
-                    ->sortable()
-                    ->badge()
+                TextColumn::make('eol_date') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('End of Life (EOL)') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->date('d M Y') // date: Format data sebagai tanggal saja
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
+                    ->badge() // badge: Menampilkan item dengan gaya badge warna
                     ->color(
                         fn($state) =>
                         ($state && \Carbon\Carbon::parse($state) <= now()->addMonths(3)) ? 'danger' : 'success'
                     ),
 
-                TextColumn::make('brand')
-                    ->label('Merek')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('brand') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Merek') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
+                    ->toggleable(isToggledHiddenByDefault: true), // toggleable: Kolom bisa disembunyikan/dimunculkan dari pengaturan kolom
 
-                TextColumn::make('serial_number')
-                    ->label('Serial/Lisensi')
-                    ->searchable()
-                    ->copyable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('serial_number') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Serial/Lisensi') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
+                    ->copyable() // copyable: Memberikan fitur klik-untuk-menyalin pada data
+                    ->toggleable(isToggledHiddenByDefault: true), // toggleable: Kolom bisa disembunyikan/dimunculkan dari pengaturan kolom
 
-                TextColumn::make('purchase_date')
-                    ->label('Tgl Beli')
-                    ->date('d M Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('purchase_date') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Tgl Beli') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->date('d M Y') // date: Format data sebagai tanggal saja
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
+                    ->toggleable(isToggledHiddenByDefault: true), // toggleable: Kolom bisa disembunyikan/dimunculkan dari pengaturan kolom
 
-                TextColumn::make('created_at')
-                    ->label('Didaftarkan Pada')
-                    ->dateTime('d M Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('created_at') // TextColumn: Kolom untuk menampilkan data teks biasa
+                    ->label('Didaftarkan Pada') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->dateTime('d M Y') // dateTime: Format data sebagai tanggal dan waktu
+                    ->sortable() // sortable: Memungkinkan kolom diurutkan (sorting) dengan klik header tabel
+                    ->toggleable(isToggledHiddenByDefault: true), // toggleable: Kolom bisa disembunyikan/dimunculkan dari pengaturan kolom
             ])
             ->filters([
                 SelectFilter::make('category')
-                    ->label('Kategori')
-                    ->options([
+                    ->label('Kategori') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
                         'IT Equipment' => 'Peralatan IT',
                         'Software' => 'Perangkat Lunak',
                         'Furniture' => 'Mebel',
@@ -104,25 +107,25 @@ class AssetsTable
                     ]),
 
                 SelectFilter::make('status')
-                    ->label('Status Aset')
-                    ->options([
+                    ->label('Status Aset') // label: Teks label yang ditampilkan untuk komponen ini
+                    ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
                         'Active' => 'Aktif',
                         'Maintenance' => 'Dalam Perbaikan',
                         'End of Life' => 'Pensiun (EOL)',
                         'Disposed' => 'Dihapus',
                         'Lost' => 'Hilang',
                     ])
-                    ->multiple(),
+                    ->multiple(), // multiple: Mengizinkan input/pilihan lebih dari satu
 
                 \Filament\Tables\Filters\Filter::make('eol_status')
                     ->form([
-                        \Filament\Forms\Components\Select::make('status')
-                            ->options([
+                        \Filament\Forms\Components\Select::make('status') // Select: Komponen dropdown untuk memilih opsi
+                            ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
                                 'aman' => 'Aman (> 3 Bulan)',
                                 'warning' => 'Mendekati EOL (≤ 3 Bulan)',
                                 'kritis' => 'Kritis / Sudah EOL',
                             ])
-                            ->label('Status EOL')
+                            ->label('Status EOL') // label: Teks label yang ditampilkan untuk komponen ini
                     ])
                     ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data): \Illuminate\Database\Eloquent\Builder {
                         return $query->when(
@@ -148,7 +151,7 @@ class AssetsTable
             ])
             ->recordActions([
                 Action::make('dispose')
-                    ->label('Pensiunkan (EOL)')
+                    ->label('Pensiunkan (EOL)') // label: Teks label yang ditampilkan untuk komponen ini
                     ->icon('heroicon-o-archive-box-x-mark')
                     ->color('danger')
                     ->requiresConfirmation()
@@ -157,10 +160,10 @@ class AssetsTable
                     ->action(function ($record) {
                         $record->update(['status' => 'End of Life']);
                     })
-                    ->visible(fn($record) => $record->eol_date && \Carbon\Carbon::parse($record->eol_date) <= now()->addMonths(3) && !in_array($record->status, ['End of Life', 'Disposed'])),
+                    ->visible(fn($record) => $record->eol_date && \Carbon\Carbon::parse($record->eol_date) <= now()->addMonths(3) && !in_array($record->status, ['End of Life', 'Disposed'])), // visible: Menampilkan field berdasarkan kondisi tertentu
 
                 Action::make('cetak_detail')
-                    ->label('Cetak Detail')
+                    ->label('Cetak Detail') // label: Teks label yang ditampilkan untuk komponen ini
                     ->icon('heroicon-o-printer')
                     ->color('success')
                     ->url(fn($record) => route('asset.cetakDetailPdf', $record->id))
@@ -169,7 +172,7 @@ class AssetsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
+                BulkActionGroup::make([ // Group: Komponen untuk mengelompokkan elemen (layout murni)
                     DeleteBulkAction::make(),
                 ]),
             ])

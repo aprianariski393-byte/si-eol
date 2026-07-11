@@ -10,17 +10,23 @@ use Illuminate\Support\Facades\Auth;
 
 class StafITMaintenanceTrendChartWidget extends ChartWidget
 {
-    protected ?string $heading = 'Tren Pemeliharaan Aset Tahun Ini';
-    protected static ?int $sort = 3;
+    protected ?string $heading = 'Tren Pemeliharaan Aset Tahun Ini'; // heading: Judul yang ditampilkan pada bagian atas widget
+    protected static ?int $sort = 3; // sort: Urutan prioritas widget saat ditampilkan di halaman dashboard
     protected string $color = 'info';
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = 1; // columnSpan: Menentukan seberapa lebar widget membentang di dalam layout grid
 
-    public static function canView(): bool
+    /**
+     * Fungsi canView.
+     */
+    public static function canView(): bool // canView: Menentukan apakah user yang login memiliki akses untuk melihat widget ini
     {
         return Auth::check() && Auth::user()->hasRole('Staf IT');
     }
 
-    protected function getData(): array
+    /**
+     * Mendapatkan data statistik untuk ditampilkan pada chart.
+     */
+    protected function getData(): array // getData: Mengembalikan susunan data dataset dan label yang akan dirender oleh chart
     {
         // Mengelompokkan data berdasarkan tanggal maintenance per bulan tahun ini
         $data = Trend::model(MaintenanceLog::class)
@@ -43,7 +49,10 @@ class StafITMaintenanceTrendChartWidget extends ChartWidget
         ];
     }
 
-    protected function getType(): string
+    /**
+     * Mendapatkan tipe chart (misal: line, bar, pie, dll).
+     */
+    protected function getType(): string // getType: Menentukan tipe visualisasi chart (bar, line, pie, doughnut, polarArea)
     {
         return 'line';
     }

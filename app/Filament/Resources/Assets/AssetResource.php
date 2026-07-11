@@ -42,21 +42,33 @@ class AssetResource extends Resource
     // Batas jumlah item yang muncul di hasil Global Search
     protected static int $globalSearchResultsLimit = 10;
 
+    /**
+     * Konfigurasi form untuk membuat atau mengedit aset.
+     */
     public static function form(Schema $schema): Schema
     {
         return AssetForm::configure($schema);
     }
 
+    /**
+     * Konfigurasi tampilan informasi detail dari sebuah aset.
+     */
     public static function infolist(Schema $schema): Schema
     {
         return AssetInfolist::configure($schema);
     }
 
+    /**
+     * Konfigurasi tabel untuk menampilkan daftar aset.
+     */
     public static function table(Table $table): Table
     {
         return AssetsTable::configure($table);
     }
 
+    /**
+     * Mengambil daftar relasi (relations) yang terkait dengan resource ini.
+     */
     public static function getRelations(): array
     {
         return [
@@ -64,6 +76,9 @@ class AssetResource extends Resource
         ];
     }
 
+    /**
+     * Mendefinisikan rute dan halaman-halaman yang tersedia untuk resource aset.
+     */
     public static function getPages(): array
     {
         return [

@@ -11,11 +11,14 @@ class ViewPermission extends ViewRecord
 {
     protected static string $resource = PermissionResource::class;
 
+    /**
+     * Mendapatkan daftar aksi (actions) pada bagian header halaman.
+     */
     protected function getHeaderActions(): array
     {
         return [
             EditAction::make()
-                ->label(__('permission.edit_permission'))
+                ->label(__('permission.edit_permission')) // label: Teks label yang ditampilkan untuk komponen ini
                 ->icon(Heroicon::PencilSquare),
         ];
     }

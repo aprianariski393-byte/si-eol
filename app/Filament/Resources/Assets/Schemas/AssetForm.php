@@ -19,16 +19,19 @@ use Illuminate\Support\Carbon;
 
 class AssetForm
 {
+    /**
+     * Mengkonfigurasi pengaturan (schema/table/infolist) komponen ini.
+     */
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
 
-                Section::make('Informasi Utama')
+                Section::make('Informasi Utama') // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                     ->schema([
-                        TextInput::make('asset_code')
-                            ->label('Kode Aset')
-                            ->default(function () {
+                        TextInput::make('asset_code') // TextInput: Komponen input teks biasa
+                            ->label('Kode Aset') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->default(function () { // default: Nilai bawaan (awal) jika tidak ada input
                                 $prefix = 'AST-' . date('Y') . '-';
                                 $lastAsset = Asset::where('asset_code', 'like', $prefix . '%')->orderBy('id', 'desc')->first();
                                 if (!$lastAsset)
@@ -36,38 +39,38 @@ class AssetForm
                                 $parts = explode('-', $lastAsset->asset_code);
                                 return $prefix . str_pad(((int) end($parts)) + 1, 4, '0', STR_PAD_LEFT);
                             })
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->readOnly()
-                            ->columnSpanFull()
-                            ->dehydrated()
-                            ->maxLength(50)
-                            ->prefixIcon('heroicon-m-qr-code')
-                            ->helperText('Kode unik yang dihasilkan secara otomatis oleh sistem.'),
+                            ->required() // required: Menandakan bahwa field ini wajib diisi
+                            ->unique(ignoreRecord: true) // unique: Memastikan nilai unik di dalam database
+                            ->readOnly() // readOnly: Field hanya bisa dibaca, tidak bisa diubah
+                            ->columnSpanFull() // columnSpanFull: Komponen mengambil lebar penuh pada grid
+                            ->dehydrated() // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
+                            ->maxLength(50) // maxLength: Batas maksimal jumlah karakter
+                            ->prefixIcon('heroicon-m-qr-code') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->helperText('Kode unik yang dihasilkan secara otomatis oleh sistem.'), // helperText: Teks bantuan kecil di bawah komponen
 
-                        TextInput::make('name')
-                            ->label('Nama Aset')
-                            ->placeholder('Contoh: Laptop Asus ROG / Meja Kerja')
-                            ->prefixIcon('heroicon-m-cube')
-                            ->required()
-                            ->maxLength(255),
+                        TextInput::make('name') // TextInput: Komponen input teks biasa
+                            ->label('Nama Aset') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Contoh: Laptop Asus ROG / Meja Kerja') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->prefixIcon('heroicon-m-cube') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->required() // required: Menandakan bahwa field ini wajib diisi
+                            ->maxLength(255), // maxLength: Batas maksimal jumlah karakter
 
-                        Select::make('category')
-                            ->label('Kategori')
-                            ->placeholder('Pilih Kategori Aset...')
-                            ->options([
+                        Select::make('category') // Select: Komponen dropdown untuk memilih opsi
+                            ->label('Kategori') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Pilih Kategori Aset...') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
                                 'IT Equipment' => 'Peralatan IT',
                                 'Software' => 'Perangkat Lunak',
                                 'Furniture' => 'Mebel',
                                 'Vehicles' => 'Kendaraan',
                                 'Machinery' => 'Mesin',
                             ])
-                            ->searchable()
-                            ->native(false)
-                            ->prefixIcon('heroicon-m-tag')
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                            ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
+                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->prefixIcon('heroicon-m-tag') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->required() // required: Menandakan bahwa field ini wajib diisi
+                            ->live() // live: Merespon perubahan input secara real-time ke server
+                            ->afterStateUpdated(function (Get $get, Set $set, $state) { // afterStateUpdated: Fungsi callback yang dijalankan setelah nilai input berubah
                                 if ($get('purchase_date') && $state) {
                                     $years = match ($state) {
                                         'Software' => 1,
@@ -81,10 +84,10 @@ class AssetForm
                                 }
                             }),
 
-                        Select::make('department')
-                            ->label('Departemen Pengguna')
-                            ->placeholder('Pilih Departemen...')
-                            ->options([
+                        Select::make('department') // Select: Komponen dropdown untuk memilih opsi
+                            ->label('Departemen Pengguna') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Pilih Departemen...') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
                                 'IT' => 'IT',
                                 'HR' => 'HR',
                                 'Finance' => 'Finance',
@@ -92,50 +95,50 @@ class AssetForm
                                 'Marketing' => 'Marketing',
                                 'General' => 'General',
                             ])
-                            ->native(false)
-                            ->prefixIcon('heroicon-m-building-office-2')
-                            ->searchable(),
+                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->prefixIcon('heroicon-m-building-office-2') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->searchable(), // searchable: Memungkinkan opsi untuk dicari melalui pencarian
 
-                        TextInput::make('brand')
-                            ->label('Merek / Tipe')
-                            ->placeholder('Contoh: Lenovo Thinkpad T14')
-                            ->prefixIcon('heroicon-m-swatch'),
+                        TextInput::make('brand') // TextInput: Komponen input teks biasa
+                            ->label('Merek / Tipe') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Contoh: Lenovo Thinkpad T14') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->prefixIcon('heroicon-m-swatch'), // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
 
-                        TextInput::make('serial_number')
-                            ->label('Serial Number / Lisensi')
-                            ->placeholder('Masukkan SN atau Lisensi Key')
-                            ->prefixIcon('heroicon-m-hashtag')
-                            ->unique(ignoreRecord: true),
+                        TextInput::make('serial_number') // TextInput: Komponen input teks biasa
+                            ->label('Serial Number / Lisensi') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Masukkan SN atau Lisensi Key') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->prefixIcon('heroicon-m-hashtag') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->unique(ignoreRecord: true), // unique: Memastikan nilai unik di dalam database
 
-                        Select::make('status')
-                            ->label('Status Aset')
-                            ->placeholder('Pilih Status Saat Ini...')
-                            ->options([
+                        Select::make('status') // Select: Komponen dropdown untuk memilih opsi
+                            ->label('Status Aset') // label: Teks label yang ditampilkan untuk komponen ini
+                            ->placeholder('Pilih Status Saat Ini...') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
                                 'Active' => 'Aktif',
                                 'Maintenance' => 'Dalam Perbaikan',
                                 'End of Life' => 'Pensiun (EOL)',
                                 'Disposed' => 'Dihapus',
                                 'Lost' => 'Hilang',
                             ])
-                            ->native(false)
-                            ->prefixIcon('heroicon-m-check-badge')
-                            ->default('Active')
-                            ->required(),
+                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->prefixIcon('heroicon-m-check-badge') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                            ->default('Active') // default: Nilai bawaan (awal) jika tidak ada input
+                            ->required(), // required: Menandakan bahwa field ini wajib diisi
                     ])
-                    ->columns(2),
+                    ->columns(2), // columns: Menentukan jumlah grid/kolom
 
-                Group::make([
-                    Section::make('Siklus Hidup (End of Life)')
+                Group::make([ // Group: Komponen untuk mengelompokkan elemen (layout murni)
+                    Section::make('Siklus Hidup (End of Life)') // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                         ->schema([
-                            DatePicker::make('purchase_date')
-                                ->label('Tanggal Pembelian')
-                                ->placeholder('Pilih Tanggal Beli...')
-                                ->default(now())
-                                ->native(false)
-                                ->displayFormat('d F Y')
-                                ->prefixIcon('heroicon-m-calendar-days')
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                            DatePicker::make('purchase_date') // DatePicker: Komponen input tanggal
+                                ->label('Tanggal Pembelian') // label: Teks label yang ditampilkan untuk komponen ini
+                                ->placeholder('Pilih Tanggal Beli...') // placeholder: Teks abu-abu panduan saat input kosong
+                                ->default(now()) // default: Nilai bawaan (awal) jika tidak ada input
+                                ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                                ->displayFormat('d F Y') // displayFormat: Format tampilan (misal format penulisan tanggal)
+                                ->prefixIcon('heroicon-m-calendar-days') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
+                                ->live(onBlur: true) // live: Merespon perubahan input secara real-time ke server
+                                ->afterStateUpdated(function (Get $get, Set $set, $state) { // afterStateUpdated: Fungsi callback yang dijalankan setelah nilai input berubah
                                     if ($state && $get('category')) {
                                         $years = match ($get('category')) {
                                             'Software' => 1,
@@ -149,28 +152,28 @@ class AssetForm
                                     }
                                 }),
 
-                            DatePicker::make('eol_date')
-                                ->label('Tanggal End of Life (EOL)')
-                                ->placeholder('Pilih Tanggal EOL...')
-                                ->helperText('Batas waktu aman pemakaian / expired lisensi. Dapat diubah manual jika perlu.')
-                                ->native(false)
-                                ->displayFormat('d F Y')
-                                ->prefixIcon('heroicon-m-exclamation-triangle'),
+                            DatePicker::make('eol_date') // DatePicker: Komponen input tanggal
+                                ->label('Tanggal End of Life (EOL)') // label: Teks label yang ditampilkan untuk komponen ini
+                                ->placeholder('Pilih Tanggal EOL...') // placeholder: Teks abu-abu panduan saat input kosong
+                                ->helperText('Batas waktu aman pemakaian / expired lisensi. Dapat diubah manual jika perlu.') // helperText: Teks bantuan kecil di bawah komponen
+                                ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                                ->displayFormat('d F Y') // displayFormat: Format tampilan (misal format penulisan tanggal)
+                                ->prefixIcon('heroicon-m-exclamation-triangle'), // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
                         ])
-                        ->columns(2),
+                        ->columns(2), // columns: Menentukan jumlah grid/kolom
 
-                    Section::make('Tambahan')
+                    Section::make('Tambahan') // Section: Komponen untuk mengelompokkan elemen ke dalam blok/kartu
                         ->schema([
-                            Textarea::make('description')
-                                ->label('Catatan Tambahan')
-                                ->placeholder('Masukkan catatan khusus, kelengkapan, dll...')
+                            Textarea::make('description') // Textarea: Komponen input teks panjang
+                                ->label('Catatan Tambahan') // label: Teks label yang ditampilkan untuk komponen ini
+                                ->placeholder('Masukkan catatan khusus, kelengkapan, dll...') // placeholder: Teks abu-abu panduan saat input kosong
                                 ->rows(3),
 
-                            FileUpload::make('attachments')
-                                ->label('Lampiran File (Foto/Dokumen)')
-                                ->multiple()
-                                ->directory('asset-attachments')
-                                ->panelLayout('grid'),
+                            FileUpload::make('attachments') // FileUpload: Komponen untuk mengunggah file
+                                ->label('Lampiran File (Foto/Dokumen)') // label: Teks label yang ditampilkan untuk komponen ini
+                                ->multiple() // multiple: Mengizinkan input/pilihan lebih dari satu
+                                ->directory('asset-attachments') // directory: Folder tujuan penyimpanan file unggahan
+                                ->panelLayout('grid'), // panelLayout: Tata letak tampilan (contoh: grid)
                         ])
                 ])
             ]);
