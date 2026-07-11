@@ -2,35 +2,40 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Category;
+use App\Models\Status;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Auth;
 
-class AssetsByCategoryChart extends ChartWidget
+class PimpinanAssetStatusChartWidget extends ChartWidget
 {
-    protected ?string $heading = 'Aset berdasarkan Kategori';
+    protected ?string $heading = 'Proporsi Aset Berdasarkan Status';
     protected static ?int $sort = 2;
+
+    public static function canView(): bool
+    {
+        return Auth::check() && Auth::user()->hasRole('Pimpinan');
+    }
 
     protected function getData(): array
     {
-        // Mengambil semua kategori beserta jumlah aset di dalamnya
-        $categories = Category::withCount('assets')->get();
+        $statuses = Status::withCount('assets')->get();
 
         return [
             'datasets' => [
                 [
                     'label' => 'Total Assets',
-                    'data' => $categories->pluck('assets_count')->toArray(),
+                    'data' => $statuses->pluck('assets_count')->toArray(),
                     'backgroundColor' => [
-                        '#3b82f6', // blue
                         '#10b981', // green
                         '#f59e0b', // amber
                         '#ef4444', // red
+                        '#3b82f6', // blue
                         '#8b5cf6', // purple
                         '#06b6d4', // cyan
                     ],
                 ],
             ],
-            'labels' => $categories->pluck('name')->toArray(),
+            'labels' => $statuses->pluck('name')->toArray(),
         ];
     }
 

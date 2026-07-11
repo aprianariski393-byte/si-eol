@@ -6,20 +6,22 @@ use App\Models\Asset;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Support\Facades\Auth;
 
-class AssetPurchaseTrendChart extends ChartWidget
+class PimpinanPurchaseTrendChartWidget extends ChartWidget
 {
-    protected ?string $heading = 'Aset Yang Dibeli Tahun Ini';
+    protected ?string $heading = 'Tren Pembelian Aset Tahun Ini';
     protected static ?int $sort = 3;
     protected string $color = 'info';
     protected int|string|array $columnSpan = 'full';
-    public function getDescription(): ?string
+
+    public static function canView(): bool
     {
-        return 'Jumlah aset yang dibeli setiap bulan dalam tahun berjalan.';
+        return Auth::check() && Auth::user()->hasRole('Pimpinan');
     }
+
     protected function getData(): array
     {
-        // Mengelompokkan data berdasarkan tanggal pembelian (purchase_date) per bulan
         $data = Trend::model(Asset::class)
             ->dateColumn('purchase_date')
             ->between(

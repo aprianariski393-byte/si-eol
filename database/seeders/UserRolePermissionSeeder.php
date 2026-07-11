@@ -3,11 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
 
 class UserRolePermissionSeeder extends Seeder
 {
@@ -16,70 +16,61 @@ class UserRolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Permissions for users
-        $permissions = [
-            'View Any User',
-            'View User',
-            'Create User',
-            'Update User',
-            'Delete User',
-            'Restore User',
-            'Force Delete User',
-            'View Any Role',
-            'View Role',
-            'Create Role',
-            'Update Role',
-            'Delete Role',
-            'Restore Role',
-            'Force Delete Role',
-            'View Any Permission',
-            'View Permission',
-            'Create Permission',
-            'Update Permission',
-            'Delete Permission',
-            'Restore Permission',
-            'Force Delete Permission',
+        $models = [
+            'Asset',
+            'AssetAttachment',
+            'AssetHistory',
+            'Category',
+            'Department',
+            'Location',
+            'MaintenanceLog',
+            'Permission',
+            'Role',
+            'SoftwareLicenseDetail',
+            'Status',
+            'User',
+            'Vendor',
         ];
 
+        $actions = [
+            'View Any',
+            'View',
+            'Create',
+            'Update',
+            'Delete',
+            'Restore',
+            'Force Delete',
+        ];
+
+        $permissions = [];
+
+        foreach ($models as $model) {
+            $modelName = Str::title(Str::snake($model, ' '));
+            foreach ($actions as $action) {
+                $permissions[] = "{$action} {$modelName}";
+            }
+        }
+        
+        // Add widget permissions if any or let them be checked via roles
+        
         // Create permissions
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create roles
-        $roles = [
-            'Administrator' => [
-                'View Any User',
-                'View User',
-                'Create User',
-                'Update User',
-                'Delete User',
-                'Restore User',
-                'Force Delete User',
-                'View Any Role',
-                'View Role',
-                'Create Role',
-                'Update Role',
-                'Delete Role',
-                'Restore Role',
-                'Force Delete Role',
-                'View Any Permission',
-                'View Permission',
-                'Create Permission',
-                'Update Permission',
-                'Delete Permission',
-                'Restore Permission',
-                'Force Delete Permission',
-            ],
-            'User' => [
-                null,
-            ],
-        ];
+        $administrator = Role::firstOrCreate(['name' => 'Administrator']);
+        $administrator->syncPermissions($permissions); // All permissions
 
-        foreach ($roles as $roleName => $rolePermissions) {
-            $role = Role::firstOrCreate(['name' => $roleName]);
-            $role->givePermissionTo($rolePermissions);
-        }
+        $viewPermissions = array_filter($permissions, function($permission) {
+            return str_starts_with($permission, 'View Any') || str_starts_with($permission, 'View');
+        });
+
+        $stafIT = Role::firstOrCreate(['name' => 'Staf IT']);
+        $stafIT->syncPermissions($viewPermissions);
+
+        $pimpinan = Role::firstOrCreate(['name' => 'Pimpinan']);
+        $pimpinan->syncPermissions($viewPermissions);
 
         // Create users and assign roles
         $users = [
@@ -90,15 +81,21 @@ class UserRolePermissionSeeder extends Seeder
                 'role' => 'Administrator',
             ],
             [
-                'name' => 'User',
-                'email' => 'user@starter.com',
+                'name' => 'Staf IT',
+                'email' => 'stafit@starter.com',
                 'password' => Hash::make('12345678'),
-                'role' => 'User',
+                'role' => 'Staf IT',
+            ],
+            [
+                'name' => 'Pimpinan',
+                'email' => 'pimpinan@starter.com',
+                'password' => Hash::make('12345678'),
+                'role' => 'Pimpinan',
             ],
         ];
 
         foreach ($users as $userData) {
-            $user = User::firstOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $userData['email']],
                 [
                     'name' => $userData['name'],
@@ -106,7 +103,7 @@ class UserRolePermissionSeeder extends Seeder
                 ]
             );
 
-            $user->assignRole($userData['role']);
+            $user->syncRoles([$userData['role']]);
         }
 
         $this->command->info('Roles, Permissions, dan Users Telah berhasil dibuat!');
