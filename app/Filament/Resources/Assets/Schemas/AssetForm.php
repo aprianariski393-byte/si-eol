@@ -55,49 +55,16 @@ class AssetForm
                             ->required() // required: Menandakan bahwa field ini wajib diisi
                             ->maxLength(255), // maxLength: Batas maksimal jumlah karakter
 
-                        Select::make('category') // Select: Komponen dropdown untuk memilih opsi
+                        TextInput::make('category') // TextInput: Komponen input teks
                             ->label('Kategori') // label: Teks label yang ditampilkan untuk komponen ini
-                            ->placeholder('Pilih Kategori Aset...') // placeholder: Teks abu-abu panduan saat input kosong
-                            ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
-                                'IT Equipment' => 'Peralatan IT',
-                                'Software' => 'Perangkat Lunak',
-                                'Furniture' => 'Mebel',
-                                'Vehicles' => 'Kendaraan',
-                                'Machinery' => 'Mesin',
-                            ])
-                            ->searchable() // searchable: Memungkinkan opsi untuk dicari melalui pencarian
-                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->placeholder('Masukkan Kategori Aset...') // placeholder: Teks abu-abu panduan saat input kosong
                             ->prefixIcon('heroicon-m-tag') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
-                            ->required() // required: Menandakan bahwa field ini wajib diisi
-                            ->live() // live: Merespon perubahan input secara real-time ke server
-                            ->afterStateUpdated(function (Get $get, Set $set, $state) { // afterStateUpdated: Fungsi callback yang dijalankan setelah nilai input berubah
-                                if ($get('purchase_date') && $state) {
-                                    $years = match ($state) {
-                                        'Software' => 1,
-                                        'IT Equipment' => 5,
-                                        'Furniture' => 10,
-                                        'Vehicles' => 10,
-                                        'Machinery' => 10,
-                                        default => 5,
-                                    };
-                                    $set('eol_date', Carbon::parse($get('purchase_date'))->addYears($years)->toDateString());
-                                }
-                            }),
+                            ->required(), // required: Menandakan bahwa field ini wajib diisi
 
-                        Select::make('department') // Select: Komponen dropdown untuk memilih opsi
+                        TextInput::make('department') // TextInput: Komponen input teks
                             ->label('Departemen Pengguna') // label: Teks label yang ditampilkan untuk komponen ini
-                            ->placeholder('Pilih Departemen...') // placeholder: Teks abu-abu panduan saat input kosong
-                            ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
-                                'IT' => 'IT',
-                                'HR' => 'HR',
-                                'Finance' => 'Finance',
-                                'Operations' => 'Operations',
-                                'Marketing' => 'Marketing',
-                                'General' => 'General',
-                            ])
-                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
-                            ->prefixIcon('heroicon-m-building-office-2') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
-                            ->searchable(), // searchable: Memungkinkan opsi untuk dicari melalui pencarian
+                            ->placeholder('Masukkan Departemen...') // placeholder: Teks abu-abu panduan saat input kosong
+                            ->prefixIcon('heroicon-m-building-office-2'), // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
 
                         TextInput::make('brand') // TextInput: Komponen input teks biasa
                             ->label('Merek / Tipe') // label: Teks label yang ditampilkan untuk komponen ini
