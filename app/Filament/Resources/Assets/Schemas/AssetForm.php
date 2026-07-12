@@ -7,6 +7,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
@@ -16,6 +17,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AssetForm
 {
@@ -31,22 +33,13 @@ class AssetForm
                     ->schema([
                         TextInput::make('asset_code') // TextInput: Komponen input teks biasa
                             ->label('Kode Aset') // label: Teks label yang ditampilkan untuk komponen ini
-                            ->default(function () { // default: Nilai bawaan (awal) jika tidak ada input
-                                $prefix = 'AST-' . date('Y') . '-';
-                                $lastAsset = Asset::where('asset_code', 'like', $prefix . '%')->orderBy('id', 'desc')->first();
-                                if (!$lastAsset)
-                                    return $prefix . '0001';
-                                $parts = explode('-', $lastAsset->asset_code);
-                                return $prefix . str_pad(((int) end($parts)) + 1, 4, '0', STR_PAD_LEFT);
-                            })
+                            ->placeholder('Masukkan Kode Aset')
                             ->required() // required: Menandakan bahwa field ini wajib diisi
                             ->unique(ignoreRecord: true) // unique: Memastikan nilai unik di dalam database
-                            ->readOnly() // readOnly: Field hanya bisa dibaca, tidak bisa diubah
                             ->columnSpanFull() // columnSpanFull: Komponen mengambil lebar penuh pada grid
-                            ->dehydrated() // dehydrated: Menentukan apakah data akan dikirim/disimpan ke database
                             ->maxLength(50) // maxLength: Batas maksimal jumlah karakter
                             ->prefixIcon('heroicon-m-qr-code') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
-                            ->helperText('Kode unik yang dihasilkan secara otomatis oleh sistem.'), // helperText: Teks bantuan kecil di bawah komponen
+                            ->helperText('Kode unik aset.'), // helperText: Teks bantuan kecil di bawah komponen
 
                         TextInput::make('name') // TextInput: Komponen input teks biasa
                             ->label('Nama Aset') // label: Teks label yang ditampilkan untuk komponen ini
@@ -77,28 +70,14 @@ class AssetForm
                             ->prefixIcon('heroicon-m-hashtag') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
                             ->unique(ignoreRecord: true), // unique: Memastikan nilai unik di dalam database
 
-                        Select::make('status') // Select: Komponen dropdown untuk memilih opsi
+                        TextInput::make('status') // TextInput: Komponen input teks
                             ->label('Status Aset') // label: Teks label yang ditampilkan untuk komponen ini
-                            ->placeholder('Pilih Status Saat Ini...') // placeholder: Teks abu-abu panduan saat input kosong
-                            ->options([ // options: Daftar pilihan yang tersedia untuk dropdown
-                                'Active' => 'Aktif',
-                                'Maintenance' => 'Dalam Perbaikan',
-                                'End of Life' => 'Pensiun (EOL)',
-                                'Disposed' => 'Dihapus',
-                                'Lost' => 'Hilang',
-                            ])
-                            ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
+                            ->placeholder('Masukkan Status Aset...') // placeholder: Teks abu-abu panduan saat input kosong
                             ->prefixIcon('heroicon-m-check-badge') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
-                            ->default('Active') // default: Nilai bawaan (awal) jika tidak ada input
                             ->required(), // required: Menandakan bahwa field ini wajib diisi
 
-                        Select::make('created_by')
-                            ->label('Dibuat Oleh')
-                            ->relationship('creator', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->native(false)
-                            ->prefixIcon('heroicon-m-user'),
+                        Hidden::make('created_by')
+                            ->default(fn() => Auth::id()),
                     ])
                     ->columns(2), // columns: Menentukan jumlah grid/kolom
 
@@ -108,24 +87,9 @@ class AssetForm
                             DatePicker::make('purchase_date') // DatePicker: Komponen input tanggal
                                 ->label('Tanggal Pembelian') // label: Teks label yang ditampilkan untuk komponen ini
                                 ->placeholder('Pilih Tanggal Beli...') // placeholder: Teks abu-abu panduan saat input kosong
-                                ->default(now()) // default: Nilai bawaan (awal) jika tidak ada input
                                 ->native(false) // native: Menggunakan UI custom Filament (jika false) atau bawaan browser
                                 ->displayFormat('d F Y') // displayFormat: Format tampilan (misal format penulisan tanggal)
-                                ->prefixIcon('heroicon-m-calendar-days') // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
-                                ->live(onBlur: true) // live: Merespon perubahan input secara real-time ke server
-                                ->afterStateUpdated(function (Get $get, Set $set, $state) { // afterStateUpdated: Fungsi callback yang dijalankan setelah nilai input berubah
-                                    if ($state && $get('category')) {
-                                        $years = match ($get('category')) {
-                                            'Software' => 1,
-                                            'IT Equipment' => 5,
-                                            'Furniture' => 10,
-                                            'Vehicles' => 10,
-                                            'Machinery' => 10,
-                                            default => 5,
-                                        };
-                                        $set('eol_date', Carbon::parse($state)->addYears($years)->toDateString());
-                                    }
-                                }),
+                                ->prefixIcon('heroicon-m-calendar-days'), // prefixIcon: Ikon yang ditampilkan di bagian depan komponen
 
                             DatePicker::make('eol_date') // DatePicker: Komponen input tanggal
                                 ->label('Tanggal End of Life (EOL)') // label: Teks label yang ditampilkan untuk komponen ini
